@@ -48,7 +48,6 @@ class Tx_Metadata_Service_Metadata_Pdf extends t3lib_svbase {
 		require_once(t3lib_extMgm::extPath($this->extKey) . 'Resources/Private/PHP/Zend/Pdf.php');
 
 		$this->out = array();
-		$this->out['fields'] = array();
 
 		if($inputFile = $this->getInputFile()) {
 
@@ -64,6 +63,9 @@ class Tx_Metadata_Service_Metadata_Pdf extends t3lib_svbase {
 				$this->out['creation_date'] = $this->parsePdfDate($pdf->properties['CreationDate']);
 				$this->out['modification_date'] = $this->parsePdfDate($pdf->properties['ModDate']);
 
+				$this->out = Tx_Metadata_Utility_Unicode::convert($this->out);
+				
+				// @todo: decide whether a Hook would make sense here (remove this todo after 1 year of release 1.0)
 			}
 
 		} else {
@@ -114,8 +116,6 @@ class Tx_Metadata_Service_Metadata_Pdf extends t3lib_svbase {
 		
 		return $pdfDateTime;
 	}
-
-
 }
 
 

@@ -36,9 +36,6 @@ class Tx_Metadata_Service_Metadata_Image extends t3lib_svbase {
 	protected $scriptRelPath = 'Classes/Service/Metadata/Image.php';	// Path to this script relative to the extension dir.
 	protected $extKey = 'metadata';	// The extension key.
 
-		// iso-8859-1 is assumed to be the standard encoding for file metadata
-	protected $inputEncoding = 'iso-8859-1';
-
 	/**
 	 * Performs the service processing
 	 *
@@ -49,8 +46,6 @@ class Tx_Metadata_Service_Metadata_Image extends t3lib_svbase {
 		$this->out = array();
 
 		if($inputFile = $this->getInputFile()) {
-
-			$charsetConversionObject = t3lib_div::makeInstance('t3lib_cs');
 
 				// Read basic metadata from file, write additional metadata to $info
 			$imagesize = getimagesize($inputFile, $info);
@@ -137,25 +132,16 @@ class Tx_Metadata_Service_Metadata_Image extends t3lib_svbase {
 				);
 
 				foreach($iptcAttributes as $iptcAttribute => $mediaField) {
-
 					if (isset($iptc[$iptcAttribute])) {
-
 						$this->out[$mediaField] = $iptc[$iptcAttribute][0];
-
 					}
-
 				}
-
 			}
-
+			
 				// Convert each metadata value from its encoding to utf-8
-			foreach ($this->out as $metadataKey => $metadataValue) {
-				if (mb_detect_encoding($metadataValue === 'UTF-8')) {
-					$this->inputEncoding = 'utf-8';
-				}
-				$charsetConversionObject->conv($this->out[$metadataKey], $this->inputEncoding, 'utf-8');
-			}
-
+			$this->out = Tx_Metadata_Utility_Unicode::convert($this->out);
+			
+			// @todo: decide whether a Hook would make sense here (remove this todo after 1 year of release 1.0)
 
 		} else {
 			$this->errorPush(T3_ERR_SV_NO_INPUT, 'No or empty input.');
