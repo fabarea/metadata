@@ -23,15 +23,10 @@
  *  This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
 
-
 /**
- *
- *
  * @package metadata
- * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
- *
  */
-class Tx_Metadata_Controller_TestController extends Tx_Extbase_MVC_Controller_ActionController {
+class Tx_Metadata_Controller_TestController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionController {
 
 	/**
 	 * action index
@@ -39,43 +34,6 @@ class Tx_Metadata_Controller_TestController extends Tx_Extbase_MVC_Controller_Ac
 	 * @return void
 	 */
 	public function indexAction() {
-
-		$file = 'typo3conf/ext/metadata/Tests/MimeType/typo3-logo.gif';
-		$metaInfo = $this->getFileMetaInfo($file, 'image/gif');
-
-		var_dump($metaInfo);
-
-	}
-
-
-	/**
-	 * Get meta information from a file using a metaExtract service
-	 *
-	 * @param	string		file with absolute path
-	 * @param	string		file MIME type
-	 * @param	array		current file meta information which should be extended
-	 * @return	array		file meta information
-	 * @todo what about using services in a chain?
-	 */
-	protected function getFileMetaInfo($pathName, $mimeType, $metaData = array()) {
-
-		$absolutePathName = t3lib_div::getFileAbsFileName($pathName);
-
-		// find a service for that file type
-		$serviceObject = t3lib_div::makeInstanceService('metaExtract', $mimeType);
-
-		if (is_object($serviceObject)) {
-			$serviceObject->setInputFile($absolutePathName, $mimeType);
-			$conf['meta'] = $metaData;
-			if ($serviceObject->process() > 0 && (is_array($svmeta = $serviceObject->getOutput()))) {
-				$metaData = t3lib_div::array_merge_recursive_overrule($metaData, $svmeta);
-			}
-			$serviceObject->process();
-			$serviceObject->__destruct();
-			unset($serviceObject);
-		}
-
-		return isset($metaData) ? $metaData : array();
 
 	}
 

@@ -1,4 +1,5 @@
 <?php
+namespace TYPO3\CMS\Metadata\Service\Metadata;
 /***************************************************************
  *  Copyright notice
  *
@@ -25,16 +26,30 @@
  ***************************************************************/
 
 /**
- *
- *
  * @package metadata
- * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
- *
  */
-class Tx_Metadata_Service_Metadata_Image extends t3lib_svbase {
-	protected $prefixId = 'tx_metadata_service_metadata_image';		// Same as class name
-	protected $scriptRelPath = 'Classes/Service/Metadata/Image.php';	// Path to this script relative to the extension dir.
-	protected $extKey = 'metadata';	// The extension key.
+class Image extends \TYPO3\CMS\Core\Service\AbstractService {
+
+	/**
+	 * Same as class name
+	 *
+	 * @var string
+	 */
+	protected $prefixId = 'tx_metadata_service_metadata_image';
+
+	/**
+	 * Path to this script relative to the extension dir.
+	 *
+	 * @var string
+	 */
+	protected $scriptRelPath = 'Classes/Service/Metadata/Image.php';
+
+	/**
+	 * The extension key.
+	 *
+	 * @var string
+	 */
+	protected $extKey = 'metadata';
 
 	/**
 	 * Performs the service processing
@@ -47,38 +62,33 @@ class Tx_Metadata_Service_Metadata_Image extends t3lib_svbase {
 
 		if($inputFile = $this->getInputFile()) {
 
-				// Read basic metadata from file, write additional metadata to $info
-			$imagesize = getimagesize($inputFile, $info);
+			// Read basic metadata from file, write additional metadata to $info
+			$imageSize = getimagesize($inputFile, $info);
 
-				// Parse metadata from getimagesize
-			$this->out = array(
-				'width' => $imagesize['0'],
-				'height' => $imagesize['1'],
-					// Unit px is hardcoded for images
-				'unit' => 'px',
-			);
+			// Parse metadata from getimagesize
+			$this->out['unit'] = 'px';
 
-			if (isset($imagesize['channels'])) {
-				$this->out['color_space'] = $this->getColorSpace($imagesize['channels']);
+			if (isset($imageSize['channels'])) {
+				$this->out['color_space'] = $this->getColorSpace($imageSize['channels']);
 			}
 
-				// Makes sure the function exists otherwise generates a log entry
+			// Makes sure the function exists otherwise generates a log entry
 			if (function_exists('exif_read_data')) {
 
 				$exif = exif_read_data($inputFile, 0, TRUE);
 
-					// Parse metadata from EXIF GPS block
+				// Parse metadata from EXIF GPS block
 				if (is_array($exif['GPS'])) {
 					$this->out['latitude'] = $this->parseGPSCoordinate($exif['GPS']['GPSLatitude'], $exif['GPS']['GPSLatitudeRef']);;
 					$this->out['longitude'] = $this->parseGPSCoordinate($exif['GPS']['GPSLongitude'], $exif['GPS']['GPSLongitudeRef']);;
 				}
 
-					// Parse metadata from EXIF EXIF block
+				// Parse metadata from EXIF EXIF block
 				if (is_array($exif['EXIF'])) {
 					$this->out['creation_date'] = strtotime($exif['EXIF']['DateTimeOriginal']);
 				}
 
-					// Parse metadata from EXIF IFD0 block
+				// Parse metadata from EXIF IFD0 block
 				if (is_array($exif['IFD0'])) {
 
 					foreach ($exif['IFD0'] as $exifAttribute => $value) {
@@ -105,17 +115,15 @@ class Tx_Metadata_Service_Metadata_Image extends t3lib_svbase {
 				}
 			}
 			else {
-				t3lib_div::devLog('Function exif_read_data() is not available. Make sure Mbstring and Exif module are loaded.', 2);
+				\TYPO3\CMS\Core\Utility\GeneralUtility::devLog('Function exif_read_data() is not available. Make sure Mbstring and Exif module are loaded.', 2);
 			}
 
-				// Check if IPTC metadata exists
+			// Check if IPTC metadata exists
 			if (isset($info['APP13'])) {
-
 				$iptc = iptcparse($info['APP13']);
-
 			}
 
-				// Parse metadata from IPTC APP13
+			// Parse metadata from IPTC APP13
 			if (is_array($iptc)) {
 
 				$iptcAttributes = array(
@@ -137,11 +145,9 @@ class Tx_Metadata_Service_Metadata_Image extends t3lib_svbase {
 					}
 				}
 			}
-			
-				// Convert each metadata value from its encoding to utf-8
-			$this->out = Tx_Metadata_Utility_Unicode::convert($this->out);
-			
-			// @todo: decide whether a Hook would make sense here (remove this todo after 1 year of release 1.0)
+
+			// Convert each metadata value from its encoding to utf-8
+			$this->out = \TYPO3\CMS\Metadata\Utility\Unicode::convert($this->out);
 
 		} else {
 			$this->errorPush(T3_ERR_SV_NO_INPUT, 'No or empty input.');
@@ -152,6 +158,10 @@ class Tx_Metadata_Service_Metadata_Image extends t3lib_svbase {
 
 	/**
 	 * Converting GPS
+	 *
+	 * @param array $value
+	 * @param string $ref
+	 * @return string
 	 */
 	protected function parseGPSCoordinate($value, $ref) {
 
@@ -177,6 +187,9 @@ class Tx_Metadata_Service_Metadata_Image extends t3lib_svbase {
 
 	/**
 	 * Converts the color space id to the value in Media Management
+	 *
+	 * @param int $value
+	 * @return int
 	 */
 	protected function getColorSpace($value) {
 
@@ -191,11 +204,6 @@ class Tx_Metadata_Service_Metadata_Image extends t3lib_svbase {
 		return $colorSpaceToName[$value];
 
 	}
-
-}
-
-if (defined('TYPO3_MODE') && $TYPO3_CONF_VARS[TYPO3_MODE]['XCLASS']['ext/media/Classes/Service/Pdf.php'])	{
-	include_once($TYPO3_CONF_VARS[TYPO3_MODE]['XCLASS']['ext/media/Classes/Service/Pdf.php']);
 }
 
 ?>

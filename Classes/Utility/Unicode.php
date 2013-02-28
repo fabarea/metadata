@@ -1,5 +1,5 @@
 <?php
-
+namespace TYPO3\CMS\Metadata\Utility;
 /* * *************************************************************
  *  Copyright notice
  *
@@ -24,27 +24,27 @@
  * ************************************************************* */
 
 /**
- * Utiliy method for charset conversion 
- * 
+ * Utility method for charset conversion
+ *
  * @package metadata
  */
-class Tx_Metadata_Utility_Unicode {
+class Unicode {
 
 	/**
-	 * Ouptut a UTF-8 array of metadata
+	 * Output a UTF-8 array of metadata
 	 *
-	 * @param	array		the metadata array taken as input
-	 * @return	array		the metadata converted into UTF-8
+	 * @param array $metadata the metadata array taken as input
+	 * @return array
 	 */
 	static public function convert($metadata) {
-		/* @var $charsetConversionObject t3lib_cs */
-		$charsetConversionObject = t3lib_div::makeInstance('t3lib_cs');
-		
+
+		/* @var $charsetConversionObject \TYPO3\CMS\Core\Charset\CharsetConverter */
+		$charsetConversionObject = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('TYPO3\CMS\Core\Charset\CharsetConverter');
+
 		// iso-8859-1 is assumed to be the standard encoding for file metadata
 		$inputEncoding = 'iso-8859-1';
-		
+
 		foreach ($metadata as $metadataKey => $metadataValue) {
-			// @todo mb_detect_encoding seems to be pretty buggy. Check whether it should be replaced by something else...
 			// check out comment at http://php.net/manual/en/function.mb-detect-encoding.php
 			if (mb_detect_encoding($metadataValue, 'UTF-8', true)) {
 				$inputEncoding = 'utf-8';
@@ -52,10 +52,8 @@ class Tx_Metadata_Utility_Unicode {
 
 			$metadata[$metadataKey] = $charsetConversionObject->conv($metadata[$metadataKey], $inputEncoding, 'utf-8');
 		}
-		
+
 		return $metadata;
 	}
-
 }
-
 ?>

@@ -3,7 +3,7 @@ if (!defined('TYPO3_MODE')) {
 	die ('Access denied.');
 }
 
-t3lib_extMgm::addService($_EXTKEY, 'metaExtract', 'Tx_Media_PdfService', array(
+\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::addService($_EXTKEY, 'metaExtract', 'Metadata\PdfService', array(
 	'title'       => 'PDF meta data extraction',
 	'description' => 'Uses Zend PDF to extract meta data',
 
@@ -16,11 +16,11 @@ t3lib_extMgm::addService($_EXTKEY, 'metaExtract', 'Tx_Media_PdfService', array(
 	'os'          => '',
 	'exec'        => '',
 
-	'classFile'   => t3lib_extMgm::extPath($_EXTKEY) . 'Classes/Service/Metadata/Pdf.php',
-	'className'   => 'Tx_Metadata_Service_Metadata_Pdf',
+	'classFile'   => \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::extPath($_EXTKEY) . 'Classes/Service/Metadata/Pdf.php',
+	'className'   => 'TYPO3\CMS\Metadata\Service\Metadata\Pdf',
 ));
 
-t3lib_extMgm::addService($_EXTKEY, 'metaExtract', 'Tx_Media_ImageService', array(
+\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::addService($_EXTKEY, 'metaExtract', 'Metadata\ImageService', array(
 	'title'       => 'Image meta data extraction',
 	'description' => 'Uses PHP EXIF/IPTC functions to extract meta data',
 
@@ -33,8 +33,9 @@ t3lib_extMgm::addService($_EXTKEY, 'metaExtract', 'Tx_Media_ImageService', array
 	'os'          => '',
 	'exec'        => '',
 
-	'classFile'   => t3lib_extMgm::extPath($_EXTKEY) . 'Classes/Service/Metadata/Image.php',
-	'className'   => 'Tx_Metadata_Service_Metadata_Image',
+	'classFile'   => \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::extPath($_EXTKEY) . 'Classes/Service/Metadata/Image.php',
+	'className'   => 'TYPO3\CMS\Metadata\Service\Metadata\Image',
 ));
+
 
 ?>

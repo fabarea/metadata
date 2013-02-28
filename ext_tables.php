@@ -3,9 +3,9 @@ if (!defined('TYPO3_MODE')) {
 	die ('Access denied.');
 }
 
-
-
-if (TYPO3_MODE === 'BE') {
+// Let see if a BE module is required
+// It could make sense if one has to define how metadata extraction should behave
+if (FALSE) { # if (TYPO3_MODE === 'BE') {
 
 	/**
 	 * Registers a Backend Module
@@ -24,11 +24,17 @@ if (TYPO3_MODE === 'BE') {
 			'labels' => 'LLL:EXT:' . $_EXTKEY . '/Resources/Private/Language/locallang_metadataevaluator.xml',
 		)
 	);
-
 }
 
 
-t3lib_extMgm::addStaticFile($_EXTKEY, 'Configuration/TypoScript', 'Media: Metadata extraction');
+if (FALSE) {
+	t3lib_extMgm::addStaticFile($_EXTKEY, 'Configuration/TypoScript', 'Media: Metadata extraction');
+}
 
+// Connect "postFileIndex" signal slot with the metadata service.
+/** @var $signalSlotDispatcher \TYPO3\CMS\Extbase\SignalSlot\Dispatcher */
+$signalSlotDispatcher = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('TYPO3\CMS\Extbase\Object\ObjectManager')
+	->get('TYPO3\CMS\Extbase\SignalSlot\Dispatcher');
 
+$signalSlotDispatcher->connect('TYPO3\CMS\Core\Resource\Service\IndexerService', 'postFileIndex', 'TYPO3\CMS\Metadata\Service\IndexerService', 'postFileIndex', FALSE);
 ?>
