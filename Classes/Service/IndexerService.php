@@ -40,7 +40,6 @@ class IndexerService {
 
 		if ($fileObject->isIndexed()) {
 
-			$metaData = array();
 			$inputFilePath = $fileObject->getForLocalProcessing($writable = FALSE);
 			$inputFilePath = \TYPO3\CMS\Core\Utility\GeneralUtility::getFileAbsFileName($inputFilePath);
 
@@ -61,7 +60,14 @@ class IndexerService {
 				$properties = $assetObject->getProperties();
 				$updatedProperties = array();
 
-				foreach ($serviceObject->getOutput() as $key => $value) {
+				$metadata = $serviceObject->getOutput();
+
+				// try to guess a title according to the file name
+				if (empty($metadata['title'])) {
+					$metadata['title'] = $this->guessTitle($fileObject->getName());
+				}
+
+				foreach ($metadata as $key => $value) {
 					// there are some conditions to have metadata filling the asset
 					// 1. the property name must exist in Asset
 					// 2. the property value must be empty
@@ -75,6 +81,19 @@ class IndexerService {
 				$assetRepository->update($assetObject);
 			}
 		}
+	}
+
+	/**
+	 * Guess a title given a file name.
+	 *
+	 * @param string $fileName
+	 * @return string
+	 */
+	public function guessTitle($fileName){
+		$info = pathinfo($fileName);
+		$fileNameWithoutExtension = basename($fileName, '.' . $info['extension']);
+		$titleProvisional = preg_replace('/-|_/is', ' ', $fileNameWithoutExtension);
+		return trim(preg_replace("([A-Z])", " $0", $titleProvisional));
 	}
 }
 
