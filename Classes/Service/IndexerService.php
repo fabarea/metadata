@@ -49,36 +49,40 @@ class IndexerService {
 
 			if (is_object($serviceObject)) {
 
-				// Get the asset to have more metadata from method getProperties()
+				// Notice: get the asset to have more metadata from method getProperties()
+				// This can probably be removed when FAL will have a more advance handling of properties.
+
 				/** @var $assetRepository \TYPO3\CMS\Media\Domain\Repository\AssetRepository */
 				$assetRepository = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('TYPO3\CMS\Media\Domain\Repository\AssetRepository');
 				$assetObject = $assetRepository->findByUid($fileObject->getUid());
+				if (is_object($assetObject)) {
 
-				$serviceObject->setInputFile($inputFilePath, $assetObject->getMimeType());
-				$serviceObject->process();
+					$serviceObject->setInputFile($inputFilePath, $assetObject->getMimeType());
+					$serviceObject->process();
 
-				$properties = $assetObject->getProperties();
-				$updatedProperties = array();
+					$properties = $assetObject->getProperties();
+					$updatedProperties = array();
 
-				$metadata = $serviceObject->getOutput();
+					$metadata = $serviceObject->getOutput();
 
-				// try to guess a title according to the file name
-				if (empty($metadata['title'])) {
-					$metadata['title'] = $this->guessTitle($fileObject->getName());
-				}
-
-				foreach ($metadata as $key => $value) {
-					// there are some conditions to have metadata filling the asset
-					// 1. the property name must exist in Asset
-					// 2. the property value must be empty
-					// 3. $value must have a value
-					if (isset($properties[$key]) && empty($properties[$key]) && $value) {
-						$updatedProperties[$key] = $value;
+					// try to guess a title according to the file name
+					if (empty($metadata['title'])) {
+						$metadata['title'] = $this->guessTitle($fileObject->getName());
 					}
-				}
 
-				$assetObject->updateProperties($updatedProperties);
-				$assetRepository->update($assetObject);
+					foreach ($metadata as $key => $value) {
+						// there are some conditions to have metadata filling the asset
+						// 1. the property name must exist in Asset
+						// 2. the property value must be empty
+						// 3. $value must have a value
+						if (isset($properties[$key]) && empty($properties[$key]) && $value) {
+							$updatedProperties[$key] = $value;
+						}
+					}
+
+					$assetObject->updateProperties($updatedProperties);
+					$assetRepository->update($assetObject);
+				}
 			}
 		}
 	}
