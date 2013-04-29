@@ -52,15 +52,22 @@ class Image extends \TYPO3\CMS\Core\Service\AbstractService {
 	protected $extKey = 'metadata';
 
 	/**
+	 * Same as class name
+	 *
+	 * @var string
+	 */
+	protected $allowedImageTypes = array(IMAGETYPE_JPEG, IMAGETYPE_TIFF_II, IMAGETYPE_TIFF_MM);
+
+	/**
 	 * Performs the service processing
 	 *
-	 * @return	boolean
+	 * @return    boolean
 	 */
-	public function process()	{
+	public function process() {
 
 		$this->out = array();
 
-		if($inputFile = $this->getInputFile()) {
+		if ($inputFile = $this->getInputFile()) {
 
 			// Read basic metadata from file, write additional metadata to $info
 			$imageSize = getimagesize($inputFile, $info);
@@ -73,49 +80,55 @@ class Image extends \TYPO3\CMS\Core\Service\AbstractService {
 			}
 
 			// Makes sure the function exists otherwise generates a log entry
-			if (function_exists('exif_read_data')) {
+			if (function_exists('exif_imagetype') && function_exists('exif_read_data')) {
 
-				$exif = exif_read_data($inputFile, 0, TRUE);
+				// Determine image type
+				$imageType = exif_imagetype($inputFile);
 
-				// Parse metadata from EXIF GPS block
-				if (is_array($exif['GPS'])) {
-					$this->out['latitude'] = $this->parseGPSCoordinate($exif['GPS']['GPSLatitude'], $exif['GPS']['GPSLatitudeRef']);;
-					$this->out['longitude'] = $this->parseGPSCoordinate($exif['GPS']['GPSLongitude'], $exif['GPS']['GPSLongitudeRef']);;
-				}
+				// Only try to read exif data for supported types
+				if (in_array($imageType, $this->allowedImageTypes)) {
 
-				// Parse metadata from EXIF EXIF block
-				if (is_array($exif['EXIF'])) {
-					$this->out['creation_date'] = strtotime($exif['EXIF']['DateTimeOriginal']);
-				}
+					$exif = exif_read_data($inputFile, 0, TRUE);
 
-				// Parse metadata from EXIF IFD0 block
-				if (is_array($exif['IFD0'])) {
+					// Parse metadata from EXIF GPS block
+					if (is_array($exif['GPS'])) {
+						$this->out['latitude'] = $this->parseGPSCoordinate($exif['GPS']['GPSLatitude'], $exif['GPS']['GPSLatitudeRef']);;
+						$this->out['longitude'] = $this->parseGPSCoordinate($exif['GPS']['GPSLongitude'], $exif['GPS']['GPSLongitudeRef']);;
+					}
 
-					foreach ($exif['IFD0'] as $exifAttribute => $value) {
+					// Parse metadata from EXIF EXIF block
+					if (is_array($exif['EXIF'])) {
+						$this->out['creation_date'] = strtotime($exif['EXIF']['DateTimeOriginal']);
+					}
 
-						switch ($exifAttribute) {
+					// Parse metadata from EXIF IFD0 block
+					if (is_array($exif['IFD0'])) {
 
-							case 'XResolution' :
-								$this->out['horizontal_resolution'] = $this->fractionToInt($value);
-							break;
-							case 'YResolution' :
-								$this->out['vertical_resolution'] = $this->fractionToInt($value);
-							break;
-							case 'Subject' :
-								$this->out['description'] = $value;
-							break;
-							case 'DateTime' :
-								$this->out['modification_date'] = strtotime($value);
-							break;
-							case 'Software' :
-								$this->out['creator_tool'] = $value;
-							break;
+						foreach ($exif['IFD0'] as $exifAttribute => $value) {
+
+							switch ($exifAttribute) {
+
+								case 'XResolution' :
+									$this->out['horizontal_resolution'] = $this->fractionToInt($value);
+									break;
+								case 'YResolution' :
+									$this->out['vertical_resolution'] = $this->fractionToInt($value);
+									break;
+								case 'Subject' :
+									$this->out['description'] = $value;
+									break;
+								case 'DateTime' :
+									$this->out['modification_date'] = strtotime($value);
+									break;
+								case 'Software' :
+									$this->out['creator_tool'] = $value;
+									break;
+							}
 						}
 					}
 				}
-			}
-			else {
-				\TYPO3\CMS\Core\Utility\GeneralUtility::devLog('Function exif_read_data() is not available. Make sure Mbstring and Exif module are loaded.', 2);
+			} else {
+				\TYPO3\CMS\Core\Utility\GeneralUtility::devLog('Function exif_imagetype() and exif_read_data() are not available. Make sure Mbstring and Exif module are loaded.', 2);
 			}
 
 			// Check if IPTC metadata exists
@@ -127,19 +140,19 @@ class Image extends \TYPO3\CMS\Core\Service\AbstractService {
 			if (is_array($iptc)) {
 
 				$iptcAttributes = array(
-					'2#005'	=> 'title',
-					'2#120'	=> 'caption',
-					'2#025'	=> 'keywords',
-					'2#085'	=> 'author',
-					'2#115'	=> 'publisher',
-					'2#080'	=> 'creator',
-					'2#116'	=> 'copyright_notice',
-					'2#100'	=> 'location_country',
-					'2#090'	=> 'location_city',
-					'2#055'	=> 'creation_date',
+					'2#005' => 'title',
+					'2#120' => 'caption',
+					'2#025' => 'keywords',
+					'2#085' => 'author',
+					'2#115' => 'publisher',
+					'2#080' => 'creator',
+					'2#116' => 'copyright_notice',
+					'2#100' => 'location_country',
+					'2#090' => 'location_city',
+					'2#055' => 'creation_date',
 				);
 
-				foreach($iptcAttributes as $iptcAttribute => $mediaField) {
+				foreach ($iptcAttributes as $iptcAttribute => $mediaField) {
 					if (isset($iptc[$iptcAttribute])) {
 						$this->out[$mediaField] = $iptc[$iptcAttribute][0];
 					}
