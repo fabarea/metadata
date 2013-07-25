@@ -7,7 +7,7 @@ conf.py:
   copyright: 2013 to now
   project: Metadata
   version: 1.0
-  release: 1.0.0
+  release: 1.0.1
 
   #render README.rst, not Documentation/Index.rst
   master_doc: README
