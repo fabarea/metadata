@@ -88,7 +88,7 @@ class Image extends \TYPO3\CMS\Core\Service\AbstractService {
 				// Only try to read exif data for supported types
 				if (in_array($imageType, $this->allowedImageTypes)) {
 
-					$exif = exif_read_data($inputFile, 0, TRUE);
+					$exif = @exif_read_data($inputFile, 0, TRUE);
 
 					// Parse metadata from EXIF GPS block
 					if (is_array($exif['GPS'])) {
