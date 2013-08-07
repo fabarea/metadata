@@ -25,15 +25,14 @@ namespace TYPO3\CMS\Metadata\Service\Metadata;
  *  This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
 
-// Add auto-loader for Zend PDF library
+/**
+ * Add auto-loader for Zend PDF library
+ */
 require_once(\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::extPath('metadata') . '/Resources/Private/ZendPdf/vendor/autoload.php');
 
 /**
- *
- *
  * @package metadata
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
- *
  */
 class Pdf extends \TYPO3\CMS\Core\Service\AbstractService {
 
@@ -49,25 +48,36 @@ class Pdf extends \TYPO3\CMS\Core\Service\AbstractService {
 	 *
 	 * @return boolean
 	 */
-	public function process()	{
+	public function process() {
 
 		$this->out = array();
 
-		if($inputFile = $this->getInputFile()) {
+		if ($inputFile = $this->getInputFile()) {
 
-			$pdf = \ZendPdf\PdfDocument::load($inputFile);
+			try {
 
-			if (is_object($pdf)) {
+				$pdf = \ZendPdf\PdfDocument::load($inputFile);
 
-				$this->out['title'] = $pdf->properties['Title'];
-				$this->out['creator'] = $pdf->properties['Author'];
-				$this->out['description'] = $pdf->properties['Subject'];
-				$this->out['keywords'] = $pdf->properties['Keywords'];
-				$this->out['creator_tool'] = $pdf->properties['Creator'];
-				$this->out['creation_date'] = $this->parsePdfDate($pdf->properties['CreationDate']);
-				$this->out['modification_date'] = $this->parsePdfDate($pdf->properties['ModDate']);
+				if (is_object($pdf)) {
 
-				$this->out = \TYPO3\CMS\Metadata\Utility\Unicode::convert($this->out);
+					$this->out['title'] = $pdf->properties['Title'];
+					$this->out['creator'] = $pdf->properties['Author'];
+					$this->out['description'] = $pdf->properties['Subject'];
+					$this->out['keywords'] = $pdf->properties['Keywords'];
+					$this->out['creator_tool'] = $pdf->properties['Creator'];
+					$this->out['creation_date'] = $this->parsePdfDate($pdf->properties['CreationDate']);
+					$this->out['modification_date'] = $this->parsePdfDate($pdf->properties['ModDate']);
+
+					$this->out = \TYPO3\CMS\Metadata\Utility\Unicode::convert($this->out);
+				}
+			} catch (\Exception $e) {
+
+				/** @var $loggerManager \TYPO3\CMS\Core\Log\LogManager */
+				$loggerManager = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('TYPO3\CMS\Core\Log\LogManager');
+
+				/** @var $logger \TYPO3\CMS\Core\Log\Logger */
+				$message = sprintf('Metadata: PDF indexation raised an exception %s.', $e->getMessage());
+				$loggerManager->getLogger(get_class($this))->warning($message);
 			}
 
 		} else {
@@ -77,7 +87,6 @@ class Pdf extends \TYPO3\CMS\Core\Service\AbstractService {
 		return $this->getLastError();
 	}
 
-
 	/**
 	 * Convert a PDF date string into a timestamp
 	 * PDF date: D:YYYYMMDDHHmmSSOHH'mm'
@@ -85,7 +94,7 @@ class Pdf extends \TYPO3\CMS\Core\Service\AbstractService {
 	 * @param string $pdfDate
 	 * @return int
 	 */
-	protected function parsePdfDate($pdfDate)	{
+	protected function parsePdfDate($pdfDate) {
 
 		// Remove starting D: if exists
 		$pdfDate = preg_replace("/D:/", "", $pdfDate);
@@ -106,7 +115,6 @@ class Pdf extends \TYPO3\CMS\Core\Service\AbstractService {
 					$timeOffset = '+' . $timeOffset;
 					break;
 			}
-
 		}
 
 		// Build an interpretable datetime
