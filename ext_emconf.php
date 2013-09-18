@@ -11,7 +11,7 @@
 $EM_CONF[$_EXTKEY] = array (
   'title' => 'Metadata extraction for Media',
   'description' => 'PHP-based metadata extraction for Media Management.',
-  'category' => 'plugin',
+  'category' => 'service',
   'author' => 'Media team',
   'author_email' => 'typo3-dev@lists.typo3.org',
   'author_company' => 'TYPO3 Association',
@@ -25,19 +25,19 @@ $EM_CONF[$_EXTKEY] = array (
   'modify_tables' => '',
   'clearCacheOnLoad' => 0,
   'lockType' => '',
-  'version' => '1.0.1',
-  'constraints' => 
+  'version' => '1.1.0-dev',
+  'constraints' =>
   array (
-    'depends' => 
+    'depends' =>
     array (
       'cms' => '',
       'media' => '1.0.0-1.0.99',
       'typo3' => '6.1.1-6.1.99',
     ),
-    'conflicts' => 
+    'conflicts' =>
     array (
     ),
-    'suggests' => 
+    'suggests' =>
     array (
     ),
   ),
