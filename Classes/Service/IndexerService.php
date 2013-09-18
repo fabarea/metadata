@@ -40,35 +40,32 @@ class IndexerService {
 
 		if ($fileObject->isIndexed()) {
 
-			$inputFilePath = $fileObject->getForLocalProcessing($writable = FALSE);
-			$inputFilePath = \TYPO3\CMS\Core\Utility\GeneralUtility::getFileAbsFileName($inputFilePath);
+			/** @var $objectManager \TYPO3\CMS\Extbase\Object\ObjectManager */
+			$objectManager = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('TYPO3\CMS\Extbase\Object\ObjectManager');
 
-			// find a service for that file type
+			/** @var $assetRepository \TYPO3\CMS\Media\Domain\Repository\AssetRepository */
+			$assetRepository = $objectManager->get('TYPO3\CMS\Media\Domain\Repository\AssetRepository');
+
 			/** @var $serviceObject \TYPO3\CMS\Metadata\Service\Metadata\Pdf */
 			$serviceObject = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstanceService('metaExtract', $fileObject->getMimeType());
 
-			if (is_object($serviceObject)) {
+			if (is_object($serviceObject) && $this->isMemorySufficient($fileObject)) {
+
+				$inputFilePath = $fileObject->getForLocalProcessing($writable = FALSE);
+				$inputFilePath = \TYPO3\CMS\Core\Utility\GeneralUtility::getFileAbsFileName($inputFilePath);
 
 				// Notice: get the asset to have more metadata from method getProperties()
 				// This can probably be removed when FAL will have a more advance handling of properties.
-
-				/** @var $assetRepository \TYPO3\CMS\Media\Domain\Repository\AssetRepository */
-				$assetRepository = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('TYPO3\CMS\Media\Domain\Repository\AssetRepository');
 				$assetObject = $assetRepository->findByUid($fileObject->getUid());
 				if (is_object($assetObject)) {
 
 					$serviceObject->setInputFile($inputFilePath, $assetObject->getMimeType());
 					$serviceObject->process();
-
 					$properties = $assetObject->getProperties();
-					$updatedProperties = array();
+
+					$values = array();
 
 					$metadata = $serviceObject->getOutput();
-
-					// try to guess a title according to the file name
-					if (empty($metadata['title'])) {
-						$metadata['title'] = $this->guessTitle($fileObject->getName());
-					}
 
 					foreach ($metadata as $key => $value) {
 						// there are some conditions to have metadata filling the asset
@@ -76,15 +73,67 @@ class IndexerService {
 						// 2. the property value must be empty
 						// 3. $value must have a value
 						if (isset($properties[$key]) && empty($properties[$key]) && $value) {
-							$updatedProperties[$key] = $value;
+							$values[$key] = $value;
 						}
 					}
 
-					$assetObject->updateProperties($updatedProperties);
+					$assetObject->updateProperties($values);
 					$assetRepository->update($assetObject);
 				}
 			}
+
+			// In any case update title if remains empty. Do it even if no metadata service was found.
+			if (!$fileObject->getProperty('title')) {
+
+				$values = array();
+
+				// Guess a title according to the file name.
+				$values['title'] = $this->guessTitle($fileObject->getName());
+
+				$fileObject->updateProperties($values);
+				$assetRepository->update($fileObject);
+			}
 		}
+	}
+
+	/**
+	 * Tell if the memory is sufficient to proceed of metadata extraction.
+	 * It has been seen the PDF parser consuming all resources, prevent this!
+	 *
+	 * @param \TYPO3\CMS\Core\Resource\File $fileObject
+	 * @return bool
+	 */
+	protected function isMemorySufficient($fileObject) {
+		$memoryLimit = ini_get('memory_limit');
+		$memorySufficient = $this->transformToBytes($memoryLimit) * 0.75 > memory_get_usage();
+
+		// If the memory is not sufficient but the file is not a PDF, metadata extraction is still allowed.
+		if (! $memorySufficient && $fileObject->getMimeType() !== 'application/pdf') {
+			$memorySufficient = TRUE;
+		}
+		return $memorySufficient;
+	}
+
+	/**
+	 * Transform a human size into bytes
+	 *
+	 * @param $val
+	 * @return int|string
+	 */
+	protected function transformToBytes($val) {
+		$val = trim($val);
+		$last = strtolower($val[strlen($val) - 1]);
+		switch ($last) {
+			// The 'G' modifier is available since PHP 5.1.0
+			case 'g':
+				$val *= 1024;
+			case 'm':
+				$val *= 1024;
+			case 'k':
+				$val *= 1024;
+		}
+
+		return $val;
 	}
 
 	/**
@@ -94,10 +143,19 @@ class IndexerService {
 	 * @return string
 	 */
 	public function guessTitle($fileName){
-		$info = pathinfo($fileName);
-		$fileNameWithoutExtension = basename($fileName, '.' . $info['extension']);
-		$titleProvisional = preg_replace('/-|_/is', ' ', $fileNameWithoutExtension);
-		return trim(preg_replace("([A-Z])", " $0", $titleProvisional));
+		$fileNameWithoutExtension = preg_replace("/\\.[^.\\s]{3,4}$/", "", $fileName);
+
+		// first case: the name is separated by _ or -
+		// second case: this is an upper camel case name
+		if (preg_match('/-|_/is', $fileNameWithoutExtension)) {
+			$title = preg_replace('/-|_/is', ' ', $fileNameWithoutExtension);
+		} elseif (preg_match('/[A-Z]/', $fileNameWithoutExtension)) {
+			$parts = preg_split('/(?=[A-Z])/', $fileNameWithoutExtension, -1, PREG_SPLIT_NO_EMPTY);
+			$title = implode(' ', $parts);
+		}
+
+		// remove double space
+		return preg_replace('/\s+/', ' ', $title);
 	}
 }
 
