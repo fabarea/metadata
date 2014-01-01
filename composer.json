@@ -1,0 +1,5 @@
+{
+    "name": "typo3/cms-metadata",
+    "description": "PHP-based metadata extraction.",
+    "type": "typo3-cms-extension"
+}

@@ -9,8 +9,8 @@
 *********************************************************************/
 
 $EM_CONF[$_EXTKEY] = array (
-  'title' => 'Metadata extraction for Media',
-  'description' => 'PHP-based metadata extraction for Media Management.',
+  'title' => 'Metadata extraction',
+  'description' => 'PHP-based metadata extraction.',
   'category' => 'service',
   'author' => 'Media team',
   'author_email' => 'typo3-dev@lists.typo3.org',
