@@ -143,8 +143,9 @@ class IndexerService {
 	 * @return string
 	 */
 	public function guessTitle($fileName){
-		$fileNameWithoutExtension = preg_replace("/\\.[^.\\s]{3,4}$/", "", $fileName);
+		$fileNameWithoutExtension = $this->removeExtension($fileName);
 
+		$title = $fileNameWithoutExtension;
 		// first case: the name is separated by _ or -
 		// second case: this is an upper camel case name
 		if (preg_match('/-|_/is', $fileNameWithoutExtension)) {
@@ -156,6 +157,20 @@ class IndexerService {
 
 		// remove double space
 		return preg_replace('/\s+/', ' ', $title);
+	}
+
+	/**
+	 * Remove extension of a file.
+	 *
+	 * @param string $fileName
+	 * @return string
+	 */
+	protected function removeExtension($fileName){
+		$parts = explode('.', $fileName);
+		if (!empty($parts)) {
+			array_pop($parts);
+		}
+		return implode('.', $parts);
 	}
 }
 
