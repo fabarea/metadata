@@ -1,28 +1,21 @@
 <?php
 namespace TYPO3\CMS\Metadata\Service;
-/***************************************************************
- *  Copyright notice
+
+/**
+ * This file is part of the TYPO3 CMS project.
  *
- *  (c) 2013 Fabien Udriot <fabien.udriot@typo3.org>
+ * It is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License, either version 2
+ * of the License, or any later version.
  *
- *  All rights reserved
+ * For the full copyright and license information, please read the
+ * LICENSE.txt file that was distributed with this source code.
  *
- *  This script is part of the TYPO3 project. The TYPO3 project is
- *  free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 3 of the License, or
- *  (at your option) any later version.
- *
- *  The GNU General Public License can be found at
- *  http://www.gnu.org/copyleft/gpl.html.
- *
- *  This script is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  This copyright notice MUST APPEAR in all copies of the script!
- ***************************************************************/
+ * The TYPO3 project - inspiring people to share!
+ */
+
+use TYPO3\CMS\Core\Resource\File;
+use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 /**
  * @package metadata
@@ -32,31 +25,31 @@ class IndexerService {
 	/**
 	 * Performs the service processing
 	 *
-	 * @param \TYPO3\CMS\Core\Resource\File $fileObject
+	 * @param File $file
 	 * @param array $fileInfo
 	 * @return void
 	 */
-	public function postFileIndex(\TYPO3\CMS\Core\Resource\File $fileObject, $fileInfo = array()) {
+	public function postFileIndex(File $file, $fileInfo = array()) {
 
-		if ($fileObject->isIndexed()) {
+		if ($file->isIndexed()) {
 
 			/** @var $objectManager \TYPO3\CMS\Extbase\Object\ObjectManager */
-			$objectManager = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('TYPO3\CMS\Extbase\Object\ObjectManager');
+			$objectManager = GeneralUtility::makeInstance('TYPO3\CMS\Extbase\Object\ObjectManager');
 
 			/** @var $assetRepository \TYPO3\CMS\Media\Domain\Repository\AssetRepository */
 			$assetRepository = $objectManager->get('TYPO3\CMS\Media\Domain\Repository\AssetRepository');
 
 			/** @var $serviceObject \TYPO3\CMS\Metadata\Service\Metadata\Pdf */
-			$serviceObject = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstanceService('metaExtract', $fileObject->getMimeType());
+			$serviceObject = GeneralUtility::makeInstanceService('metaExtract', $file->getMimeType());
 
-			if (is_object($serviceObject) && $this->isMemorySufficient($fileObject)) {
+			if (is_object($serviceObject) && $this->isMemorySufficient($file)) {
 
-				$inputFilePath = $fileObject->getForLocalProcessing($writable = FALSE);
-				$inputFilePath = \TYPO3\CMS\Core\Utility\GeneralUtility::getFileAbsFileName($inputFilePath);
+				$inputFilePath = $file->getForLocalProcessing($writable = FALSE);
+				$inputFilePath = GeneralUtility::getFileAbsFileName($inputFilePath);
 
 				// Notice: get the asset to have more metadata from method getProperties()
 				// This can probably be removed when FAL will have a more advance handling of properties.
-				$assetObject = $assetRepository->findByUid($fileObject->getUid());
+				$assetObject = $assetRepository->findByUid($file->getUid());
 				if (is_object($assetObject)) {
 
 					$serviceObject->setInputFile($inputFilePath, $assetObject->getMimeType());
@@ -83,15 +76,15 @@ class IndexerService {
 			}
 
 			// In any case update title if remains empty. Do it even if no metadata service was found.
-			if (!$fileObject->getProperty('title')) {
+			if (!$file->getProperty('title')) {
 
 				$values = array();
 
 				// Guess a title according to the file name.
-				$values['title'] = $this->guessTitle($fileObject->getName());
+				$values['title'] = $this->guessTitle($file->getName());
 
-				$fileObject->updateProperties($values);
-				$assetRepository->update($fileObject);
+				$file->updateProperties($values);
+				$assetRepository->update($file);
 			}
 		}
 	}
@@ -100,7 +93,7 @@ class IndexerService {
 	 * Tell if the memory is sufficient to proceed of metadata extraction.
 	 * It has been seen the PDF parser consuming all resources, prevent this!
 	 *
-	 * @param \TYPO3\CMS\Core\Resource\File $fileObject
+	 * @param File $fileObject
 	 * @return bool
 	 */
 	protected function isMemorySufficient($fileObject) {
