@@ -17,7 +17,7 @@ if (!defined('TYPO3_MODE')) {
 	'exec'        => '',
 
 	'classFile'   => \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::extPath($_EXTKEY) . 'Classes/Service/Metadata/Pdf.php',
-	'className'   => 'TYPO3\CMS\Metadata\Service\Metadata\Pdf',
+	'className'   => 'Fab\Metadata\Service\Metadata\Pdf',
 ));
 
 \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::addService($_EXTKEY, 'metaExtract', 'Metadata\ImageService', array(
@@ -34,7 +34,7 @@ if (!defined('TYPO3_MODE')) {
 	'exec'        => '',
 
 	'classFile'   => \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::extPath($_EXTKEY) . 'Classes/Service/Metadata/Image.php',
-	'className'   => 'TYPO3\CMS\Metadata\Service\Metadata\Image',
+	'className'   => 'Fab\Metadata\Service\Metadata\Image',
 ));
 
 

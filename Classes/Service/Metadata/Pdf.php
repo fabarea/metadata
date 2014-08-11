@@ -1,5 +1,5 @@
 <?php
-namespace TYPO3\CMS\Metadata\Service\Metadata;
+namespace Fab\Metadata\Service\Metadata;
 
 /**
  * This file is part of the TYPO3 CMS project.
@@ -19,7 +19,7 @@ namespace TYPO3\CMS\Metadata\Service\Metadata;
  */
 use TYPO3\CMS\Core\Service\AbstractService;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
-use TYPO3\CMS\Metadata\Utility\Unicode;
+use Fab\Metadata\Utility\Unicode;
 
 require_once(\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::extPath('metadata') . '/Resources/Private/ZendPdf/vendor/autoload.php');
 

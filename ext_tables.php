@@ -36,5 +36,5 @@ if (FALSE) {
 $signalSlotDispatcher = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('TYPO3\CMS\Extbase\Object\ObjectManager')
 	->get('TYPO3\CMS\Extbase\SignalSlot\Dispatcher');
 
-$signalSlotDispatcher->connect('TYPO3\CMS\Core\Resource\Service\IndexerService', 'postFileIndex', 'TYPO3\CMS\Metadata\Service\IndexerService', 'postFileIndex', FALSE);
+$signalSlotDispatcher->connect('TYPO3\CMS\Core\Resource\Service\IndexerService', 'postFileIndex', 'Fab\Metadata\Service\IndexerService', 'postFileIndex', FALSE);
 ?>

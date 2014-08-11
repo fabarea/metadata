@@ -1,5 +1,5 @@
 <?php
-namespace TYPO3\CMS\Metadata\Service;
+namespace Fab\Metadata\Service;
 
 /**
  * This file is part of the TYPO3 CMS project.
@@ -39,7 +39,7 @@ class IndexerService {
 			/** @var $assetRepository \TYPO3\CMS\Media\Domain\Repository\AssetRepository */
 			$assetRepository = $objectManager->get('TYPO3\CMS\Media\Domain\Repository\AssetRepository');
 
-			/** @var $serviceObject \TYPO3\CMS\Metadata\Service\Metadata\Pdf */
+			/** @var $serviceObject \Fab\Metadata\Service\Metadata\Pdf */
 			$serviceObject = GeneralUtility::makeInstanceService('metaExtract', $file->getMimeType());
 
 			if (is_object($serviceObject) && $this->isMemorySufficient($file)) {

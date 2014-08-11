@@ -1,5 +1,5 @@
 <?php
-namespace TYPO3\CMS\Metadata\Service\Metadata;
+namespace Fab\Metadata\Service\Metadata;
 
 /**
  * This file is part of the TYPO3 CMS project.
@@ -150,7 +150,7 @@ class Image extends AbstractService {
 			}
 
 			// Convert each metadata value from its encoding to utf-8
-			$this->out = \TYPO3\CMS\Metadata\Utility\Unicode::convert($this->out);
+			$this->out = \Fab\Metadata\Utility\Unicode::convert($this->out);
 
 		} else {
 			$this->errorPush(T3_ERR_SV_NO_INPUT, 'No or empty input.');

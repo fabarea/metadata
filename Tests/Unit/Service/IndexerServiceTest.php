@@ -25,7 +25,7 @@
  ***************************************************************/
 
 /**
- * Test case for class \TYPO3\CMS\Metadata\Service\IndexerService.
+ * Test case for class \Fab\Metadata\Service\IndexerService.
  *
  * @author Fabien Udriot <fabien.udriot@typo3.org>
  * @subpackage metadata
@@ -33,12 +33,12 @@
 class IndexerServiceTest extends \TYPO3\CMS\Core\Tests\UnitTestCase {
 
 	/**
-	 * @var \TYPO3\CMS\Metadata\Service\IndexerService
+	 * @var \Fab\Metadata\Service\IndexerService
 	 */
 	private $fixture;
 
 	public function setUp() {
-		$this->fixture = new \TYPO3\CMS\Metadata\Service\IndexerService();
+		$this->fixture = new \Fab\Metadata\Service\IndexerService();
 	}
 
 	public function tearDown() {
