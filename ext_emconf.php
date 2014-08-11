@@ -15,29 +15,23 @@ $EM_CONF[$_EXTKEY] = array (
   'author' => 'Fabien Udriot',
   'author_email' => 'fabien.udriot@typo3.org',
   'author_company' => 'Ecodev',
-  'shy' => '',
-  'priority' => '',
-  'module' => '',
   'state' => 'beta',
   'internal' => '',
   'uploadfolder' => '0',
-  'createDirs' => '',
   'modify_tables' => '',
   'clearCacheOnLoad' => 0,
-  'lockType' => '',
-  'version' => '1.2.0-dev',
-  'constraints' => 
+  'version' => '2.0.0-dev',
+  'constraints' =>
   array (
-    'depends' => 
+    'depends' =>
     array (
       'cms' => '',
-      'media' => '1.0.0-2.0.99',
-      'typo3' => '6.1.6-6.1.99',
+      'typo3' => '6.2.0-6.2.99',
     ),
-    'conflicts' => 
+    'conflicts' =>
     array (
     ),
-    'suggests' => 
+    'suggests' =>
     array (
     ),
   ),
