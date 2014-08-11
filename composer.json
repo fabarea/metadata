@@ -1,5 +1,13 @@
 {
-    "name": "typo3/cms-metadata",
-    "description": "PHP-based metadata extraction.",
-    "type": "typo3-cms-extension"
+	"name": "fab/metadata",
+	"type": "typo3-cms-extension",
+	"description": "PHP-based metadata extraction.",
+	"homepage": "https://forge.typo3.org/projects/extension-metadata",
+	"license": ["GPL-2.0+"],
+	"keywords": ["TYPO3 CMS", "metadata"],
+	"support": {
+		"issues": "https://forge.typo3.org/projects/extension-metadata/issues"
+	},
+	"version": "1.0.0-dev"
 }
+
