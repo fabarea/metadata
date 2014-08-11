@@ -3,7 +3,7 @@
  * Zend Framework (http://framework.zend.com/)
  *
  * @link      http://github.com/zendframework/zf2 for the canonical source repository
- * @copyright Copyright (c) 2005-2013 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
  * @license   http://framework.zend.com/license/new-bsd New BSD License
  */
 
@@ -13,7 +13,7 @@ use ErrorException;
 
 /**
  * ErrorHandler that can be used to catch internal PHP errors
- * and convert to a ErrorException instance.
+ * and convert to an ErrorException instance.
  */
 abstract class ErrorHandler
 {
@@ -27,7 +27,7 @@ abstract class ErrorHandler
     /**
      * Check if this error handler is active
      *
-     * @return boolean
+     * @return bool
      */
     public static function started()
     {
@@ -109,7 +109,7 @@ abstract class ErrorHandler
      */
     public static function addError($errno, $errstr = '', $errfile = '', $errline = 0)
     {
-        $stack = & static::$stack[ count(static::$stack) - 1 ];
+        $stack = & static::$stack[count(static::$stack) - 1];
         $stack = new ErrorException($errstr, 0, $errno, $errfile, $errline, $stack);
     }
 }

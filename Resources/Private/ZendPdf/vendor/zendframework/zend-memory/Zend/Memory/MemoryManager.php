@@ -3,7 +3,7 @@
  * Zend Framework (http://framework.zend.com/)
  *
  * @link      http://github.com/zendframework/zf2 for the canonical source repository
- * @copyright Copyright (c) 2005-2013 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
  * @license   http://framework.zend.com/license/new-bsd New BSD License
  */
 
@@ -33,7 +33,7 @@ class MemoryManager
      * Default value is 2/3 of memory_limit php.ini variable
      * Negative value means no limit
      *
-     * @var integer
+     * @var int
      */
     private $memoryLimit = -1;
 
@@ -42,21 +42,21 @@ class MemoryManager
      * Default value is 16K
      * Negative value means that memory objects are never swapped
      *
-     * @var integer
+     * @var int
      */
     private $minSize = 16384;
 
     /**
      * Overall size of memory, used by values
      *
-     * @var integer
+     * @var int
      */
     private $memorySize = 0;
 
     /**
-     * Id for next Zend_Memory object
+     * Id for next Zend\Memory object
      *
-     * @var integer
+     * @var int
      */
     private $nextId = 0;
 
@@ -100,14 +100,14 @@ class MemoryManager
     /**
      * Unique memory manager id
      *
-     * @var integer
+     * @var int
      */
     private $managerId;
 
     /**
      * This function is intended to generate unique id, used by memory manager
      */
-    private function _generateMemManagerId()
+    private function generateMemManagerId()
     {
         /**
          * @todo !!!
@@ -132,12 +132,12 @@ class MemoryManager
         }
 
         $this->cache = $cache;
-        $this->_generateMemManagerId();
+        $this->generateMemManagerId();
 
         $memoryLimitStr = trim(ini_get('memory_limit'));
-        if ($memoryLimitStr != ''  &&  $memoryLimitStr != -1) {
-            $this->memoryLimit = (integer)$memoryLimitStr;
-            switch (strtolower($memoryLimitStr[strlen($memoryLimitStr)-1])) {
+        if ($memoryLimitStr != '' && $memoryLimitStr != -1) {
+            $this->memoryLimit = (int) $memoryLimitStr;
+            switch (strtolower($memoryLimitStr[strlen($memoryLimitStr) - 1])) {
                 case 'g':
                     $this->memoryLimit *= 1024;
                     // no break
@@ -174,19 +174,19 @@ class MemoryManager
     /**
      * Set memory grow limit
      *
-     * @param integer $newLimit
+     * @param int $newLimit
      */
     public function setMemoryLimit($newLimit)
     {
         $this->memoryLimit = $newLimit;
 
-        $this->_swapCheck();
+        $this->swapCheck();
     }
 
     /**
      * Get memory grow limit
      *
-     * @return integer
+     * @return int
      */
     public function getMemoryLimit()
     {
@@ -196,7 +196,7 @@ class MemoryManager
     /**
      * Set minimum size of values, which may be swapped
      *
-     * @param integer $newSize
+     * @param int $newSize
      */
     public function setMinSize($newSize)
     {
@@ -206,7 +206,7 @@ class MemoryManager
     /**
      * Get minimum size of values, which may be swapped
      *
-     * @return integer
+     * @return int
      */
     public function getMinSize()
     {
@@ -214,7 +214,7 @@ class MemoryManager
     }
 
     /**
-     * Create new Zend_Memory value container
+     * Create new Zend\Memory value container
      *
      * @param string $value
      * @return Container\ContainerInterface
@@ -226,7 +226,7 @@ class MemoryManager
     }
 
     /**
-     * Create new Zend_Memory value container, which has value always
+     * Create new Zend\Memory value container, which has value always
      * locked in memory
      *
      * @param string $value
@@ -239,7 +239,7 @@ class MemoryManager
     }
 
     /**
-     * Create new Zend_Memory object
+     * Create new Zend\Memory object
      *
      * @param string $value
      * @param  bool $locked
@@ -255,7 +255,7 @@ class MemoryManager
         }
 
         // Commit other objects modifications
-        $this->_commit();
+        $this->commit();
 
         $valueObject = new Container\Movable($this, $id, $value);
 
@@ -274,7 +274,7 @@ class MemoryManager
      *
      * @internal
      * @param Container\Movable $container
-     * @param integer $id
+     * @param int $id
      * @return null
      */
     public function unlink(Container\Movable $container, $id)
@@ -299,7 +299,7 @@ class MemoryManager
      *
      * @internal
      * @param \Zend\Memory\Container\Movable $container
-     * @param integer $id
+     * @param int $id
      */
     public function processUpdate(Container\Movable $container, $id)
     {
@@ -314,7 +314,7 @@ class MemoryManager
         }
 
         // Remove just updated object from list of candidates to unload
-        if ( isset($this->unloadCandidates[$id])) {
+        if (isset($this->unloadCandidates[$id])) {
             unset($this->unloadCandidates[$id]);
         }
 
@@ -322,7 +322,7 @@ class MemoryManager
         $this->memorySize -= $this->sizes[$id];
 
         // Commit changes of previously modified object if necessary
-        $this->_commit();
+        $this->commit();
 
         $this->lastModified = $container;
     }
@@ -330,7 +330,7 @@ class MemoryManager
     /**
      * Commit modified object and put it back to the loaded objects list
      */
-    private function _commit()
+    private function commit()
     {
         if (($container = $this->lastModified) === null) {
             return;
@@ -350,7 +350,7 @@ class MemoryManager
 
         $container->startTrace();
 
-        $this->_swapCheck();
+        $this->swapCheck();
     }
 
     /**
@@ -358,7 +358,7 @@ class MemoryManager
      *
      * @throws Exception\RuntimeException
      */
-    private function _swapCheck()
+    private function swapCheck()
     {
         if ($this->memoryLimit < 0  ||  $this->memorySize < $this->memoryLimit) {
             // Memory limit is not reached
@@ -368,7 +368,7 @@ class MemoryManager
 
         // walk through loaded objects in access history order
         foreach ($this->unloadCandidates as $id => $container) {
-            $this->_swap($container, $id);
+            $this->swap($container, $id);
             unset($this->unloadCandidates[$id]);
 
             if ($this->memorySize < $this->memoryLimit) {
@@ -386,9 +386,9 @@ class MemoryManager
      * if object is not changed since last swap
      *
      * @param \Zend\Memory\Container\Movable $container
-     * @param integer $id
+     * @param int $id
      */
-    private function _swap(Container\Movable $container, $id)
+    private function swap(Container\Movable $container, $id)
     {
         if ($container->isLocked()) {
             return;
@@ -409,7 +409,7 @@ class MemoryManager
      *
      * @internal
      * @param \Zend\Memory\Container\Movable $container
-     * @param integer $id
+     * @param int $id
      */
     public function load(Container\Movable $container, $id)
     {
@@ -418,7 +418,7 @@ class MemoryManager
         // Try to swap other objects if necessary
         // (do not include specified object into check)
         $this->memorySize += strlen($value);
-        $this->_swapCheck();
+        $this->swapCheck();
 
         // Add loaded object to the end of loaded objects list
         $container->setValue($value);

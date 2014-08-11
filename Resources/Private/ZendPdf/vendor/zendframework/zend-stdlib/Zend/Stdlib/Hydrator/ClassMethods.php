@@ -3,23 +3,23 @@
  * Zend Framework (http://framework.zend.com/)
  *
  * @link      http://github.com/zendframework/zf2 for the canonical source repository
- * @copyright Copyright (c) 2005-2013 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
  * @license   http://framework.zend.com/license/new-bsd New BSD License
  */
 
 namespace Zend\Stdlib\Hydrator;
 
-use ReflectionMethod;
 use Traversable;
 use Zend\Stdlib\Exception;
 use Zend\Stdlib\ArrayUtils;
 use Zend\Stdlib\Hydrator\Filter\FilterComposite;
 use Zend\Stdlib\Hydrator\Filter\FilterProviderInterface;
-use Zend\Stdlib\Hydrator\Filter\MethodMatchFilter;
 use Zend\Stdlib\Hydrator\Filter\GetFilter;
 use Zend\Stdlib\Hydrator\Filter\HasFilter;
 use Zend\Stdlib\Hydrator\Filter\IsFilter;
-use Zend\Stdlib\Hydrator\Filter\NumberOfParameterFilter;
+use Zend\Stdlib\Hydrator\Filter\MethodMatchFilter;
+use Zend\Stdlib\Hydrator\Filter\OptionalParametersFilter;
+use Zend\Stdlib\Hydrator\NamingStrategy\UnderscoreNamingStrategy;
 
 class ClassMethods extends AbstractHydrator implements HydratorOptionsInterface
 {
@@ -30,6 +30,11 @@ class ClassMethods extends AbstractHydrator implements HydratorOptionsInterface
     protected $underscoreSeparatedKeys = true;
 
     /**
+     * @var \Zend\Stdlib\Hydrator\Filter\FilterInterface
+     */
+    private $callableMethodFilter;
+
+    /**
      * Define if extract values will use camel case or name with underscore
      * @param bool|array $underscoreSeparatedKeys
      */
@@ -38,10 +43,12 @@ class ClassMethods extends AbstractHydrator implements HydratorOptionsInterface
         parent::__construct();
         $this->setUnderscoreSeparatedKeys($underscoreSeparatedKeys);
 
+        $this->callableMethodFilter = new OptionalParametersFilter();
+
         $this->filterComposite->addFilter("is", new IsFilter());
         $this->filterComposite->addFilter("has", new HasFilter());
         $this->filterComposite->addFilter("get", new GetFilter());
-        $this->filterComposite->addFilter("parameter", new NumberOfParameterFilter(), FilterComposite::CONDITION_AND);
+        $this->filterComposite->addFilter("parameter", new OptionalParametersFilter(), FilterComposite::CONDITION_AND);
     }
 
     /**
@@ -66,18 +73,24 @@ class ClassMethods extends AbstractHydrator implements HydratorOptionsInterface
     }
 
     /**
-     * @param  boolean      $underscoreSeparatedKeys
+     * @param  bool      $underscoreSeparatedKeys
      * @return ClassMethods
      */
     public function setUnderscoreSeparatedKeys($underscoreSeparatedKeys)
     {
-        $this->underscoreSeparatedKeys = $underscoreSeparatedKeys;
+        $this->underscoreSeparatedKeys = (bool) $underscoreSeparatedKeys;
+
+        if ($this->underscoreSeparatedKeys) {
+            $this->setNamingStrategy(new UnderscoreNamingStrategy);
+        } elseif ($this->getNamingStrategy() instanceof UnderscoreNamingStrategy) {
+            $this->removeNamingStrategy();
+        }
 
         return $this;
     }
 
     /**
-     * @return boolean
+     * @return bool
      */
     public function getUnderscoreSeparatedKeys()
     {
@@ -111,11 +124,6 @@ class ClassMethods extends AbstractHydrator implements HydratorOptionsInterface
             $filter = $this->filterComposite;
         }
 
-        $transform = function ($letters) {
-            $letter = array_shift($letters);
-
-            return '_' . strtolower($letter);
-        };
         $attributes = array();
         $methods = get_class_methods($object);
 
@@ -128,21 +136,20 @@ class ClassMethods extends AbstractHydrator implements HydratorOptionsInterface
                 continue;
             }
 
-            $reflectionMethod = new ReflectionMethod(get_class($object) . '::' . $method);
-            if ($reflectionMethod->getNumberOfParameters() > 0) {
+            if (!$this->callableMethodFilter->filter(get_class($object) . '::' . $method)) {
                 continue;
             }
 
             $attribute = $method;
             if (preg_match('/^get/', $method)) {
                 $attribute = substr($method, 3);
-                $attribute = lcfirst($attribute);
+                if (!property_exists($object, $attribute)) {
+                    $attribute = lcfirst($attribute);
+                }
             }
 
-            if ($this->underscoreSeparatedKeys) {
-                $attribute = preg_replace_callback('/([A-Z])/', $transform, $attribute);
-            }
-            $attributes[$attribute] = $this->extractValue($attribute, $object->$method());
+            $attribute = $this->extractName($attribute, $object);
+            $attributes[$attribute] = $this->extractValue($attribute, $object->$method(), $object);
         }
 
         return $attributes;
@@ -166,25 +173,14 @@ class ClassMethods extends AbstractHydrator implements HydratorOptionsInterface
             ));
         }
 
-        $transform = function ($letters) {
-            $letter = substr(array_shift($letters), 1, 1);
-
-            return ucfirst($letter);
-        };
-
         foreach ($data as $property => $value) {
-            $method = 'set' . ucfirst($property);
-            if ($this->underscoreSeparatedKeys) {
-                $method = preg_replace_callback('/(_[a-z])/', $transform, $method);
-            }
-            if (method_exists($object, $method)) {
-                $value = $this->hydrateValue($property, $value);
-
+            $method = 'set' . ucfirst($this->hydrateName($property, $data));
+            if (is_callable(array($object, $method))) {
+                $value = $this->hydrateValue($property, $value, $data);
                 $object->$method($value);
             }
         }
 
         return $object;
     }
-
 }

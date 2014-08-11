@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<xliff version="1.0">
+	<file source-language="en" datatype="plaintext" original="messages" date="2012-06-05T10:52:05Z" product-name="tx_myext">
+		<header/>
+		<body>
+			<trans-unit id="palette.exif">
+				<source>EXIF / IPTC</source>
+			</trans-unit>
+			<trans-unit id="sys_file_metadata.copyright_notice">
+				<source>Copyright notice</source>
+			</trans-unit>
+			<trans-unit id="sys_file_metadata.aperture_value">
+				<source>Aperture Value (F)</source>
+			</trans-unit>
+			<trans-unit id="sys_file_metadata.shutter_speed_value">
+				<source>Shutter speed value (s)</source>
+			</trans-unit>
+			<trans-unit id="sys_file_metadata.iso_speed_ratings">
+				<source>ISO speed ratings</source>
+			</trans-unit>
+			<trans-unit id="sys_file_metadata.camera_model">
+				<source>Camera_model</source>
+			</trans-unit>
+			<trans-unit id="sys_file_metadata.focal_length">
+				<source>Focal_length (mm)</source>
+			</trans-unit>
+			<trans-unit id="sys_file_metadata.flash">
+				<source>Flash</source>
+			</trans-unit>
+			<trans-unit id="sys_file_metadata.metering_mode">
+				<source>Metering mode</source>
+			</trans-unit>
+			<trans-unit id="sys_file_metadata.horizontal_resolution">
+				<source>Horizontal resolution (dpi)</source>
+			</trans-unit>
+			<trans-unit id="sys_file_metadata.vertical_resolution">
+				<source>Vertical resolution (dpi)</source>
+			</trans-unit>
+		</body>
+	</file>
+</xliff>

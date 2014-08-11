@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<xliff version="1.0">
+	<file source-language="en" target-language="de" datatype="plaintext" original="messages" date="2012-06-05T10:52:05Z" product-name="tx_myext">
+		<header/>
+		<body>
+			<trans-unit id="palette.exif">
+				<source>EXIF / IPTC</source>
+			</trans-unit>
+			<trans-unit id="sys_file_metadata.copyright_notice">
+				<source>Copyright notice</source>
+				<target>Urheberrechts-Hinweis</target>
+			</trans-unit>
+			<trans-unit id="sys_file_metadata.aperture_value">
+				<source>Aperture Value (F)</source>
+				<target>Blendenzahl (F)</target>
+			</trans-unit>
+			<trans-unit id="sys_file_metadata.shutter_speed_value">
+				<source>Shutter speed value (s)</source>
+				<target>Belichtungszeit (s)</target>
+			</trans-unit>
+			<trans-unit id="sys_file_metadata.iso_speed_ratings">
+				<source>ISO speed ratings</source>
+				<target>ISO Empfindlichkeit</target>
+			</trans-unit>
+			<trans-unit id="sys_file_metadata.camera_model">
+				<source>Camera model</source>
+				<target>Kamera-Modell</target>
+			</trans-unit>
+			<trans-unit id="sys_file_metadata.focal_length">
+				<source>Focal_length (mm)</source>
+				<target>Brennweite (mm)</target>
+			</trans-unit>
+			<trans-unit id="sys_file_metadata.flash">
+				<source>Flash</source>
+				<target>Blitz</target>
+			</trans-unit>
+			<trans-unit id="sys_file_metadata.metering_mode">
+				<source>Metering mode</source>
+				<target>Messverfahren</target>
+			</trans-unit>
+			<trans-unit id="sys_file_metadata.horizontal_resolution">
+				<source>Horizontal resolution (dpi)</source>
+				<target>Horizontale Auflösung (dpi)</target>
+			</trans-unit>
+			<trans-unit id="sys_file_metadata.vertical_resolution">
+				<source>Vertical resolution (dpi)</source>
+				<target>Vertikale Auflösung (dpi)</target>
+			</trans-unit>
+		</body>
+	</file>
+</xliff>

@@ -3,7 +3,7 @@
  * Zend Framework (http://framework.zend.com/)
  *
  * @link      http://github.com/zendframework/zf2 for the canonical source repository
- * @copyright Copyright (c) 2005-2013 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
  * @license   http://framework.zend.com/license/new-bsd New BSD License
  */
 
@@ -22,7 +22,7 @@ class Movable extends AbstractContainer
     /**
      * Internal object Id
      *
-     * @var integer
+     * @var int
      */
     protected $id;
 
@@ -48,7 +48,7 @@ class Movable extends AbstractContainer
     /**
      * Value state (LOADED/SWAPPED/LOCKED)
      *
-     * @var integer
+     * @var int
      */
     private $state;
 
@@ -56,7 +56,7 @@ class Movable extends AbstractContainer
      * Object constructor
      *
      * @param \Zend\Memory\MemoryManager $memoryManager
-     * @param integer $id
+     * @param int $id
      * @param string $value
      */
     public function __construct(Memory\MemoryManager $memoryManager, $id, $value)
@@ -255,7 +255,7 @@ class Movable extends AbstractContainer
      * Get object id
      *
      * @internal
-     * @return integer
+     * @return int
      */
     public function getId()
     {

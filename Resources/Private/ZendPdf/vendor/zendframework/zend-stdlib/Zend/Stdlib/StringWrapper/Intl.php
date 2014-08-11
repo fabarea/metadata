@@ -3,7 +3,7 @@
  * Zend Framework (http://framework.zend.com/)
  *
  * @link      http://github.com/zendframework/zf2 for the canonical source repository
- * @copyright Copyright (c) 2005-2013 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
  * @license   http://framework.zend.com/license/new-bsd New BSD License
  */
 
@@ -48,7 +48,6 @@ class Intl extends AbstractStringWrapper
      * Returns the length of the given string
      *
      * @param string $str
-     * @param string $encoding
      * @return int|false
      */
     public function strlen($str)
@@ -62,12 +61,16 @@ class Intl extends AbstractStringWrapper
      * @param string   $str
      * @param int      $offset
      * @param int|null $length
-     * @param string   $encoding
      * @return string|false
      */
     public function substr($str, $offset = 0, $length = null)
     {
-        return grapheme_substr($str, $offset, $length);
+        // Due fix of PHP #62759 The third argument returns an empty string if is 0 or null.
+        if ($length !== null) {
+            return grapheme_substr($str, $offset, $length);
+        }
+
+        return grapheme_substr($str, $offset);
     }
 
     /**
@@ -76,7 +79,6 @@ class Intl extends AbstractStringWrapper
      * @param string $haystack
      * @param string $needle
      * @param int    $offset
-     * @param string $encoding
      * @return int|false
      */
     public function strpos($haystack, $needle, $offset = 0)

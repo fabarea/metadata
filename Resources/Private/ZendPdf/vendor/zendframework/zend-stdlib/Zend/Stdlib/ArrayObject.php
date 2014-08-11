@@ -3,24 +3,21 @@
  * Zend Framework (http://framework.zend.com/)
  *
  * @link      http://github.com/zendframework/zf2 for the canonical source repository
- * @copyright Copyright (c) 2005-2013 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
  * @license   http://framework.zend.com/license/new-bsd New BSD License
  */
 
 namespace Zend\Stdlib;
 
-use IteratorAggregate;
 use ArrayAccess;
-use Serializable;
 use Countable;
+use IteratorAggregate;
+use Serializable;
 
 /**
- * ArrayObject
+ * Custom framework ArrayObject implementation
  *
- * This ArrayObject is a rewrite of the implementation to fix
- * issues with php's implementation of ArrayObject where you
- * are unable to unset multi-dimensional arrays because you
- * need to fetch the properties / lists as references.
+ * Extends version-specific "abstract" implementation.
  */
 class ArrayObject implements IteratorAggregate, ArrayAccess, Serializable, Countable
 {
@@ -58,10 +55,9 @@ class ArrayObject implements IteratorAggregate, ArrayAccess, Serializable, Count
     /**
      * Constructor
      *
-     * @param  array       $input
-     * @param  int         $flags
-     * @param  string      $iteratorClass
-     * @return ArrayObject
+     * @param array  $input
+     * @param int    $flags
+     * @param string $iteratorClass
      */
     public function __construct($input = array(), $flags = self::STD_PROP_LIST, $iteratorClass = 'ArrayIterator')
     {
@@ -74,7 +70,8 @@ class ArrayObject implements IteratorAggregate, ArrayAccess, Serializable, Count
     /**
      * Returns whether the requested key exists
      *
-     * @return boolean
+     * @param  mixed $key
+     * @return bool
      */
     public function __isset($key)
     {
@@ -187,7 +184,7 @@ class ArrayObject implements IteratorAggregate, ArrayAccess, Serializable, Count
             throw new Exception\InvalidArgumentException('Passed variable is not an array or object, using empty array instead');
         }
 
-        if (is_object($data) && ($data instanceof ArrayObject || $data instanceof \ArrayObject)) {
+        if (is_object($data) && ($data instanceof self || $data instanceof \ArrayObject)) {
             $data = $data->getArrayCopy();
         }
         if (!is_array($data)) {
@@ -276,7 +273,8 @@ class ArrayObject implements IteratorAggregate, ArrayAccess, Serializable, Count
     /**
      * Returns whether the requested key exists
      *
-     * @return boolean
+     * @param  mixed $key
+     * @return bool
      */
     public function offsetExists($key)
     {
@@ -315,6 +313,7 @@ class ArrayObject implements IteratorAggregate, ArrayAccess, Serializable, Count
     /**
      * Unsets the value at the specified key
      *
+     * @param  mixed $key
      * @return void
      */
     public function offsetUnset($key)
@@ -405,10 +404,13 @@ class ArrayObject implements IteratorAggregate, ArrayAccess, Serializable, Count
      */
     public function unserialize($data)
     {
-        $ar = unserialize($data);
+        $ar                        = unserialize($data);
+        $this->protectedProperties = array_keys(get_object_vars($this));
+
         $this->setFlags($ar['flag']);
         $this->exchangeArray($ar['storage']);
         $this->setIteratorClass($ar['iteratorClass']);
+
         foreach ($ar as $k => $v) {
             switch ($k) {
                 case 'flag':
