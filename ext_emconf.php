@@ -10,7 +10,7 @@
 
 $EM_CONF[$_EXTKEY] = array (
   'title' => 'Metadata extraction',
-  'description' => 'PHP-based metadata extraction.',
+  'description' => 'PHP-based metadata extraction. The extension relies on the new Metadata Extractor API introduced in TYPO3 CMS 6.2.',
   'category' => 'service',
   'author' => 'Fabien Udriot',
   'author_email' => 'fabien.udriot@typo3.org',
