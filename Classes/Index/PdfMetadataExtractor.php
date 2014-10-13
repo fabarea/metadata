@@ -16,7 +16,7 @@ namespace Fab\Metadata\Index;
 
 use TYPO3\CMS\Core\Resource\File;
 use \TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
-use Fab\Metadata\Utility\Unicode;
+use ZendPdf\PdfDocument;
 
 // Add auto-loader for Zend PDF library
 // TODO Use composer install on extension installation?
@@ -81,8 +81,7 @@ class PdfMetadataExtractor extends AbstractExtractor {
 		$metadata = array();
 
 		$this->extractPdfMetaData($metadata, $file->getForLocalProcessing());
-
-		return Unicode::convert($metadata);
+		return $metadata;
 	}
 
 	/**
@@ -95,15 +94,20 @@ class PdfMetadataExtractor extends AbstractExtractor {
 	 */
 	public function extractPdfMetaData(&$metadata, $filename) {
 		try {
-			$pdf = new \ZendPdf\PdfDocument($filename, NULL, TRUE);
+			$pdf = new PdfDocument($filename, NULL, TRUE);
 
 			$metadata['pages'] = count($pdf->pages);
 
 			foreach ($pdf->properties as $detail => $value) {
 
+				$value = $this->getUnicodeUtility()->convert($value);
+
 				switch ($detail) {
 					case 'Title':
-						$metadata['title'] = $value;
+						// Let see if we need some blacklisted keywords as "untitled"...
+						if (strtolower($value) !== 'untitled') {
+							$metadata['title'] = $value;
+						}
 						break;
 
 					case 'Author':
@@ -119,7 +123,7 @@ class PdfMetadataExtractor extends AbstractExtractor {
 						break;
 
 					case 'Pages':
-						$metadata['pages'] = (int) $value;
+						$metadata['pages'] = (int)$value;
 						break;
 
 					case 'Producer':
@@ -138,6 +142,7 @@ class PdfMetadataExtractor extends AbstractExtractor {
 					default:
 				}
 			}
+
 		} catch (\Exception $e) {
 			$message = sprintf('Metadata: PDF indexation raised an exception %s.', $e->getMessage());
 			$this->getLogger()->warning($message);
@@ -193,4 +198,5 @@ class PdfMetadataExtractor extends AbstractExtractor {
 
 		return $pdfDateTime;
 	}
+
 }

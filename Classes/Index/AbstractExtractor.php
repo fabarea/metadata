@@ -68,4 +68,11 @@ abstract class AbstractExtractor implements ExtractorInterface {
 
 		return $loggerManager->getLogger(__CLASS__);
 	}
+
+	/**
+	 * @return \Fab\Metadata\Utility\UnicodeUtility
+	 */
+	protected function getUnicodeUtility() {
+		return GeneralUtility::makeInstance('Fab\Metadata\Utility\UnicodeUtility');
+	}
 }
