@@ -23,7 +23,7 @@ class ExtensionManager {
 	 * Display a message to the Extension Manager whether the configuration is OK or KO.
 	 *
 	 * @param array $params
-	 * @param object $tsObj t3lib_tsStyleConfig
+	 * @param \TYPO3\CMS\Core\TypoScript\ConfigurationForm $tsObj
 	 * @return string the HTML message
 	 */
 	public function renderMessage(&$params, &$tsObj) {
@@ -60,7 +60,7 @@ class ExtensionManager {
 	}
 
 	/**
-	 * Check if needed exif method are available in PHP
+	 * Check if functions "exif" are available in PHP.
 	 *
 	 * @return bool
 	 */
@@ -69,7 +69,7 @@ class ExtensionManager {
 	}
 
 	/**
-	 * Check if needed exif method are available in PHP
+	 * Return the according class name whether extension "exif" is available.
 	 *
 	 * @return string
 	 */
@@ -78,7 +78,7 @@ class ExtensionManager {
 	}
 
 	/**
-	 * Check if needed exif method are available in PHP
+	 * Return the according message whether extension "exif" is available.
 	 *
 	 * @return string
 	 */
@@ -91,7 +91,7 @@ class ExtensionManager {
 	}
 
 	/**
-	 * Check if needed iptc method are available in PHP
+	 * Check if functions "iptc" are available in PHP.
 	 *
 	 * @return bool
 	 */
@@ -100,7 +100,7 @@ class ExtensionManager {
 	}
 
 	/**
-	 * Check if needed exif method are available in PHP
+	 * Return the according class name whether extension "iptc" is available.
 	 *
 	 * @return string
 	 */
@@ -109,7 +109,7 @@ class ExtensionManager {
 	}
 
 	/**
-	 * Check if needed exif method are available in PHP
+	 * Return the according message whether extension "iptc" is available.
 	 *
 	 * @return string
 	 */
@@ -120,6 +120,5 @@ class ExtensionManager {
 		}
 		return $message;
 	}
-
 
 }
