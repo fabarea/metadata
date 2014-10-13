@@ -1,0 +1,8 @@
+# cat=basic//; type=user[EXT:metadata/Classes/Backend/ExtensionManager.php:Fab\Metadata\Backend\ExtensionManager->renderMessage];
+PhpExtensionCheck=0
+
+# cat=basic//; type=boolean; label= Extract metadata from images: Tell whether to extract metadata from images using PHP extensions such as Exif or IPTC.
+extract_image_metadata = 1
+
+# cat=basic//; type=boolean; label= Extract metadata from PDF: Tell whether to extract metadata from PDF using the PHP Zend Framework library.
+extract_pdf_metadata = 1
