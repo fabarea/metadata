@@ -13,22 +13,15 @@ Install the extension in the Extension Manager. Nothing more is required.
 Project info and releases
 =========================
 
-The home page of the project is at http://forge.typo3.org/projects/extension-metadata
+Home page of the project is https://github.com/fabarea/metadata
 
-Bugs can be reported on `Forge`_
+Stable release: http://typo3.org/extensions/repository/view/metadata
 
-Stable version:
-http://typo3.org/extensions/repository/view/metadata
-
-Development version:
-https://git.typo3.org/TYPO3CMS/Extensions/metadata.git
+Development version: https://github.com/fabarea/metadata.git
 
 ::
 
-	git clone git://git.typo3.org/TYPO3CMS/Extensions/metadata.git
-
-.. _Forge: http://forge.typo3.org/projects/extension-metadata/issues/new
+	git clone https://github.com/fabarea/metadata.git
 
 
-Github mirror:
-http://github.com/TYPO3-Extensions/metadata
+Bug reports: https://github.com/fabarea/metadata/issues
