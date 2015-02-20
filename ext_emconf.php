@@ -18,25 +18,20 @@ $EM_CONF[$_EXTKEY] = array (
   'state' => 'stable',
   'internal' => '',
   'uploadfolder' => '0',
-  'modify_tables' => '',
   'clearCacheOnLoad' => 0,
-  'version' => '2.1.0-dev',
-  'constraints' => 
+  'version' => '2.1.2',
+  'constraints' =>
   array (
-    'depends' => 
+    'depends' =>
     array (
       'cms' => '',
       'typo3' => '6.2.0-6.2.99',
     ),
-    'conflicts' => 
+    'conflicts' =>
     array (
     ),
-    'suggests' => 
+    'suggests' =>
     array (
     ),
   ),
-  'user' => 'fab1en',
-  'comment' => 'Change log https://forge.typo3.org/versions/2843 - CMS 6.2 compatibility. Credits goes to Felix Nagel for this release.',
 );
-
-?>
