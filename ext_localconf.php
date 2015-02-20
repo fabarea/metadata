@@ -6,8 +6,8 @@ if (!defined('TYPO3_MODE')) {
 $extractMetadataImage = $extractMetadataPdf = TRUE;
 if (!empty($GLOBALS['TYPO3_CONF_VARS']['EXT']['extConf']['metadata'])) {
 	$configuration = unserialize($GLOBALS['TYPO3_CONF_VARS']['EXT']['extConf']['metadata']);
-	$extractMetadataImage = (bool)$configuration['extract_metadata_image'];
-	$extractMetadataPdf = (bool)$configuration['extract_metadata_pdf'];
+	$extractMetadataImage = (bool)$configuration['extract_image_metadata'];
+	$extractMetadataPdf = (bool)$configuration['extract_pdf_metadata'];
 }
 
 // Register metadata extractor for images if configured so.
