@@ -13,11 +13,11 @@ Install the extension in the Extension Manager. Nothing more is required.
 Project info and releases
 =========================
 
-Home page of the project is https://github.com/fabarea/metadata
+Project home: https://github.com/fabarea/metadata
 
-Stable release: http://typo3.org/extensions/repository/view/metadata
+Stable releases: http://typo3.org/extensions/repository/view/metadata
 
-Development version: https://github.com/fabarea/metadata.git
+Development: https://github.com/fabarea/metadata.git
 
 ::
 
