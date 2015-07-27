@@ -15,6 +15,7 @@ namespace Fab\Metadata\Index;
  */
 
 use TYPO3\CMS\Core\Resource\File;
+use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 /**
  * Service dealing with metadata extraction of images.
@@ -229,7 +230,7 @@ class ImageMetadataExtractor extends AbstractExtractor {
 
 				case 'ShutterSpeedValue':
 					$parts = explode('/', $value);
-					$metadata['shutter_speed_value'] = '1/' . (int) pow(2, $parts[0] / $parts[1]);
+					$metadata['shutter_speed_value'] = '1/' . (int)pow(2, $parts[0] / $parts[1]);
 					break;
 
 				case 'ISOSpeedRatings':
@@ -247,11 +248,11 @@ class ImageMetadataExtractor extends AbstractExtractor {
 					break;
 
 				case 'Flash':
-					$metadata['flash'] = (int) $value;
+					$metadata['flash'] = (int)$value;
 					break;
 
 				case 'MeteringMode':
-					$metadata['metering_mode'] = (int) $value;
+					$metadata['metering_mode'] = (int)$value;
 					break;
 
 				case 'ColorSpace':
@@ -366,11 +367,18 @@ class ImageMetadataExtractor extends AbstractExtractor {
 	 */
 	protected function parseGpsCoordinate($value, $ref) {
 		if (is_array($value)) {
-			$neutralValue = $value[0] + ((($value[1] * 60) + ($value[2])) / 3600);
+			$processedValue = array();
+			foreach ($value as $key => $item) {
+				if (strpos($item, '/') !== FALSE) {
+					$parts = GeneralUtility::trimExplode('/', $item);
+					$processedValue[$key] = (int)($parts[0] / $parts[1]);
+				}
+			}
+			$neutralValue = $processedValue[0] + ((($processedValue[1] * 60) + ($processedValue[2])) / 3600);
 			$value = ($ref === 'N' || $ref === 'E') ? $neutralValue : '-' . $neutralValue;
 		}
 
-		return (string) $value;
+		return (string)$value;
 	}
 
 	/**
@@ -394,6 +402,6 @@ class ImageMetadataExtractor extends AbstractExtractor {
 			$value = $this->colorSpaceToNameMapping[$value];
 		}
 
-		return (string) $value;
+		return (string)$value;
 	}
 }
