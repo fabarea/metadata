@@ -366,7 +366,14 @@ class ImageMetadataExtractor extends AbstractExtractor {
 	 */
 	protected function parseGpsCoordinate($value, $ref) {
 		if (is_array($value)) {
-			$neutralValue = $value[0] + ((($value[1] * 60) + ($value[2])) / 3600);
+			$processedValue = array();
+			foreach ($value as $key => $item) {
+				if (strpos($item, '/') !== FALSE) {
+					$parts = \TYPO3\CMS\Core\Utility\GeneralUtility::trimExplode('/', $item);
+					$processedValue[$key] = (int) ($parts[0] / $parts[1]);
+				}
+			}
+			$neutralValue = $processedValue[0] + ((($processedValue[1] * 60) + ($processedValue[2])) / 3600);
 			$value = ($ref === 'N' || $ref === 'E') ? $neutralValue : '-' . $neutralValue;
 		}
 
