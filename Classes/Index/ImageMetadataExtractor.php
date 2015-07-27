@@ -47,7 +47,6 @@ class ImageMetadataExtractor extends AbstractExtractor {
 	protected $iptcAttributesMapping = array(
 		'2#005' => 'title',
 		'2#120' => 'caption',
-		// TODO: do we need to split() the value of this field?
 		'2#025' => 'keywords',
 		'2#115' => 'publisher',
 		'2#080' => 'creator',
@@ -155,6 +154,10 @@ class ImageMetadataExtractor extends AbstractExtractor {
 			$exif = $data['EXIF'];
 			if (is_array($data['IFD0'])) {
 				$exif = array_merge($data['IFD0'], $exif);
+			}
+			// adds GPS data from global exif data
+			if (is_array($data['GPS']) && !isset($exif['GPS'])) {
+				$exif['GPS'] = $data['GPS'];
 			}
 
 			$this->processExifData($metadata, $exif);
@@ -313,7 +316,12 @@ class ImageMetadataExtractor extends AbstractExtractor {
 			if (is_array($iptc)) {
 				foreach ($this->iptcAttributesMapping as $attribute => $mediaField) {
 					if (isset($iptc[$attribute])) {
-						$metadata[$mediaField] = $iptc[$attribute][0];
+						// store categories as comma separated values in DB
+						if ($mediaField === 'keywords') {
+							$metadata[$mediaField] = implode(',', $iptc[$attribute]);
+						} else {
+							$metadata[$mediaField] = $iptc[$attribute][0];
+						}
 					}
 				}
 			}
