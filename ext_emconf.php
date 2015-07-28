@@ -26,6 +26,7 @@ $EM_CONF[$_EXTKEY] = array (
     array (
       'cms' => '',
       'typo3' => '6.2.0-7.99.99',
+		'filemetadata' => '',
     ),
     'conflicts' =>
     array (
