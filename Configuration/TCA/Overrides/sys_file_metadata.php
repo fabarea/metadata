@@ -2,26 +2,6 @@
 if (!defined('TYPO3_MODE')) die ('Access denied.');
 
 $tca = array(
-	'types' => array(
-		TYPO3\CMS\Core\Resource\File::FILETYPE_IMAGE => array('showitem' => '
-			fileinfo, title, description, alternative, keywords, caption, download_name,
-
-			--div--;LLL:EXT:cms/locallang_ttc.xml:tabs.access,
-				--palette--;LLL:EXT:filemetadata/Resources/Private/Language/locallang_tca.xlf:palette.visibility;10;;,
-				fe_groups,
-
-			--div--;LLL:EXT:filemetadata/Resources/Private/Language/locallang_tca.xlf:tabs.metadata,
-				creator,
-				--palette--;;20;;,
-				--palette--;;21;;,
-				--palette--;LLL:EXT:metadata/Resources/Private/Language/locallang.xlf:palette.exif;22;;,
-				--palette--;;23;;,
-				--palette--;LLL:EXT:filemetadata/Resources/Private/Language/locallang_tca.xlf:palette.geo_location;40;;,
-				--palette--;;30;;,
-				--palette--;LLL:EXT:filemetadata/Resources/Private/Language/locallang_tca.xlf:palette.metrics;50;;,
-				--palette--;;51;;'
-		),
-	),
 	'palettes' => array(
 		'20' => array('showitem' => 'publisher, source', 'canNotCollapse' => '1'),
 		'21' => array('showitem' => 'creator_tool, copyright_notice', 'canNotCollapse' => '1'),
@@ -209,4 +189,49 @@ $tca = array(
 		),
 	),
 );
+
+// "types" are not the same between 7.x and 6.2.
+if (version_compare(TYPO3_version, '7.1', '<')) {
+	$tca['types'] = array(
+		TYPO3\CMS\Core\Resource\File::FILETYPE_IMAGE => array('showitem' => '
+			fileinfo, title, description, alternative, keywords, caption, download_name,' .
+			'--div--;LLL:EXT:cms/locallang_ttc.xml:tabs.access,
+				--palette--;LLL:EXT:filemetadata/Resources/Private/Language/locallang_tca.xlf:palette.visibility;10;;,
+				fe_groups,
+			--div--;LLL:EXT:filemetadata/Resources/Private/Language/locallang_tca.xlf:tabs.metadata,
+				creator,
+				--palette--;;20;;,
+				--palette--;;21;;,
+				--palette--;LLL:EXT:metadata/Resources/Private/Language/locallang.xlf:palette.exif;22;;,
+				--palette--;;23;;,
+				--palette--;LLL:EXT:filemetadata/Resources/Private/Language/locallang_tca.xlf:palette.geo_location;40;;,
+				--palette--;;30;;,
+				--palette--;LLL:EXT:filemetadata/Resources/Private/Language/locallang_tca.xlf:palette.metrics;50;;,
+				--palette--;;51;;,
+			--div--;LLL:EXT:lang/locallang_tca.xlf:sys_category.tabs.category,categories'
+		),
+	);
+} else {
+	// TCA for > 7.1
+	$tca['types'] = array(
+		TYPO3\CMS\Core\Resource\File::FILETYPE_IMAGE => array('showitem' => '
+			fileinfo, title, description, alternative, keywords, caption, download_name,
+			--div--;LLL:EXT:frontend/Resources/Private/Language/locallang_ttc.xlf:tabs.access,
+				--palette--;LLL:EXT:filemetadata/Resources/Private/Language/locallang_tca.xlf:palette.visibility;10;;,
+				fe_groups,
+			--div--;LLL:EXT:filemetadata/Resources/Private/Language/locallang_tca.xlf:tabs.metadata,
+				creator,
+				--palette--;;20;;,
+				--palette--;;21;;,
+				--palette--;LLL:EXT:metadata/Resources/Private/Language/locallang.xlf:palette.exif;22;;,
+				--palette--;;23;;,
+				--palette--;LLL:EXT:filemetadata/Resources/Private/Language/locallang_tca.xlf:palette.geo_location;40;;,
+				--palette--;;30;;,
+				--palette--;LLL:EXT:filemetadata/Resources/Private/Language/locallang_tca.xlf:palette.metrics;50;;,
+				--palette--;;51;;,
+			--div--;LLL:EXT:lang/locallang_tca.xlf:sys_category.tabs.category,categories'
+		),
+	);
+}
+
 \TYPO3\CMS\Core\Utility\ArrayUtility::mergeRecursiveWithOverrule($GLOBALS['TCA']['sys_file_metadata'], $tca);
