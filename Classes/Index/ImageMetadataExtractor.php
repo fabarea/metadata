@@ -229,8 +229,7 @@ class ImageMetadataExtractor extends AbstractExtractor {
 					break;
 
 				case 'ShutterSpeedValue':
-					$parts = explode('/', $value);
-					$metadata['shutter_speed_value'] = '1/' . (int)pow(2, $parts[0] / $parts[1]);
+					$metadata['shutter_speed_value'] = $this->formatShutterSpeedValue($value);
 					break;
 
 				case 'ISOSpeedRatings':
@@ -393,6 +392,31 @@ class ImageMetadataExtractor extends AbstractExtractor {
 			return intval($fractionParts[0] / $fractionParts[1]);
 		} else {
 			return intval($fraction);
+		}
+	}
+
+	/**
+	 * Format shutter speed value
+	 * To convert this value to ordinary 'Shutter Speed'; calculate this value's power of 2, then reciprocal.
+	 * For example, if value is '4', shutter speed is 1/(2^4)=1/16 second.
+	 *
+	 * @param string $shutterSpeedValue
+	 * @return string
+	 */
+	protected function formatShutterSpeedValue($shutterSpeedValue) {
+		if ((strpos($shutterSpeedValue, '1/') === FALSE)) {
+			if (strpos($shutterSpeedValue, '/') !== FALSE) {
+				$parts = explode('/', $value);
+				if (intval($parts[1])) {
+					return '1/' . (int)pow(2, $parts[0] / $parts[1]);
+				} else {
+					return $shutterSpeedValue;
+				}
+			} else {
+				return $shutterSpeedValue;
+			}
+		} else {
+			return $shutterSpeedValue;
 		}
 	}
 
