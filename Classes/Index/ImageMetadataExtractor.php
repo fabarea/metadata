@@ -229,8 +229,7 @@ class ImageMetadataExtractor extends AbstractExtractor {
 					break;
 
 				case 'ShutterSpeedValue':
-					$parts = explode('/', $value);
-					$metadata['shutter_speed_value'] = '1/' . (int)pow(2, $parts[0] / $parts[1]);
+					$metadata['shutter_speed_value'] = $this->formatShutterSpeedValue($value);
 					break;
 
 				case 'ISOSpeedRatings':
@@ -371,7 +370,11 @@ class ImageMetadataExtractor extends AbstractExtractor {
 			foreach ($value as $key => $item) {
 				if (strpos($item, '/') !== FALSE) {
 					$parts = GeneralUtility::trimExplode('/', $item);
-					$processedValue[$key] = (int)($parts[0] / $parts[1]);
+					if (intval($parts[1])) {
+						$processedValue[$key] = (int)($parts[0] / $parts[1]);
+					} else {
+						$processedValue[$key] = (int) $parts[0];
+					}
 				}
 			}
 			$neutralValue = $processedValue[0] + ((($processedValue[1] * 60) + ($processedValue[2])) / 3600);
@@ -383,11 +386,42 @@ class ImageMetadataExtractor extends AbstractExtractor {
 
 	/**
 	 * Calculates a fraction
+	 * 
+	 * @param string $fraction
+	 * @return integer
 	 */
 	protected function fractionToInt($fraction) {
-		$fractionParts = explode('/', $fraction);
+		if (strpos($fraction, '/') !== FALSE) {
+			$fractionParts = explode('/', $fraction);
+			return intval($fractionParts[0] / $fractionParts[1]);
+		} else {
+			return intval($fraction);
+		}
+	}
 
-		return intval($fractionParts[0] / $fractionParts[1]);
+	/**
+	 * Format shutter speed value
+	 * To convert this value to ordinary 'Shutter Speed'; calculate this value's power of 2, then reciprocal.
+	 * For example, if value is '4', shutter speed is 1/(2^4)=1/16 second.
+	 *
+	 * @param string $shutterSpeedValue
+	 * @return string
+	 */
+	protected function formatShutterSpeedValue($shutterSpeedValue) {
+		if ((strpos($shutterSpeedValue, '1/') === FALSE)) {
+			if (strpos($shutterSpeedValue, '/') !== FALSE) {
+				$parts = explode('/', $value);
+				if (intval($parts[1])) {
+					return '1/' . (int)pow(2, $parts[0] / $parts[1]);
+				} else {
+					return $shutterSpeedValue;
+				}
+			} else {
+				return $shutterSpeedValue;
+			}
+		} else {
+			return $shutterSpeedValue;
+		}
 	}
 
 	/**
