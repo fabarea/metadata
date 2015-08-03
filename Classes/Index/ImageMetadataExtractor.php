@@ -383,11 +383,17 @@ class ImageMetadataExtractor extends AbstractExtractor {
 
 	/**
 	 * Calculates a fraction
+	 * 
+	 * @param string $fraction
+	 * @return integer
 	 */
 	protected function fractionToInt($fraction) {
-		$fractionParts = explode('/', $fraction);
-
-		return intval($fractionParts[0] / $fractionParts[1]);
+		if (strpos($fraction, '/') !== FALSE) {
+			$fractionParts = explode('/', $fraction);
+			return intval($fractionParts[0] / $fractionParts[1]);
+		} else {
+			return intval($fraction);
+		}
 	}
 
 	/**
