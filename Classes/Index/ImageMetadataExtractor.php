@@ -370,7 +370,11 @@ class ImageMetadataExtractor extends AbstractExtractor {
 			foreach ($value as $key => $item) {
 				if (strpos($item, '/') !== FALSE) {
 					$parts = GeneralUtility::trimExplode('/', $item);
-					$processedValue[$key] = (int)($parts[0] / $parts[1]);
+					if (intval($parts[1])) {
+						$processedValue[$key] = (int)($parts[0] / $parts[1]);
+					} else {
+						$processedValue[$key] = (int) $parts[0];
+					}
 				}
 			}
 			$neutralValue = $processedValue[0] + ((($processedValue[1] * 60) + ($processedValue[2])) / 3600);
