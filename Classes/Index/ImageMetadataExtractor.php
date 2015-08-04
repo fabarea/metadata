@@ -260,13 +260,11 @@ class ImageMetadataExtractor extends AbstractExtractor {
 
 				case 'HorizontalResolution':
 				case 'XResolution':
-					// TODO: is fractionToInt needed here?
-					$metadata['horizontal_resolution'] = $this->fractionToInt($value);
+					$metadata['horizontal_resolution'] = $this->fractionToInteger($value);
 					break;
 				case 'VerticalResolution':
 				case 'YResolution':
-					// TODO: is fractionToInt needed here?
-					$metadata['vertical_resolution'] = $this->fractionToInt($value);
+					$metadata['vertical_resolution'] = $this->fractionToInteger($value);
 					break;
 
 				case 'GPS':
@@ -373,7 +371,7 @@ class ImageMetadataExtractor extends AbstractExtractor {
 					if (intval($parts[1])) {
 						$processedValue[$key] = (int)($parts[0] / $parts[1]);
 					} else {
-						$processedValue[$key] = (int) $parts[0];
+						$processedValue[$key] = (int)$parts[0];
 					}
 				}
 			}
@@ -385,22 +383,23 @@ class ImageMetadataExtractor extends AbstractExtractor {
 	}
 
 	/**
-	 * Calculates a fraction
-	 * 
+	 * Calculates a fraction.
+	 *
 	 * @param string $fraction
-	 * @return integer
+	 * @return int
 	 */
-	protected function fractionToInt($fraction) {
+	protected function fractionToInteger($fraction) {
 		if (strpos($fraction, '/') !== FALSE) {
 			$fractionParts = explode('/', $fraction);
-			return intval($fractionParts[0] / $fractionParts[1]);
+			$integer = intval($fractionParts[0] / $fractionParts[1]);
 		} else {
-			return intval($fraction);
+			$integer = intval($fraction);
 		}
+		return $integer;
 	}
 
 	/**
-	 * Format shutter speed value
+	 * Format shutter speed value.
 	 * To convert this value to ordinary 'Shutter Speed'; calculate this value's power of 2, then reciprocal.
 	 * For example, if value is '4', shutter speed is 1/(2^4)=1/16 second.
 	 *
@@ -410,18 +409,13 @@ class ImageMetadataExtractor extends AbstractExtractor {
 	protected function formatShutterSpeedValue($shutterSpeedValue) {
 		if ((strpos($shutterSpeedValue, '1/') === FALSE)) {
 			if (strpos($shutterSpeedValue, '/') !== FALSE) {
-				$parts = explode('/', $value);
+				$parts = explode('/', $shutterSpeedValue);
 				if (intval($parts[1])) {
-					return '1/' . (int)pow(2, $parts[0] / $parts[1]);
-				} else {
-					return $shutterSpeedValue;
+					$shutterSpeedValue = '1/' . (int)pow(2, $parts[0] / $parts[1]);
 				}
-			} else {
-				return $shutterSpeedValue;
 			}
-		} else {
-			return $shutterSpeedValue;
 		}
+		return $shutterSpeedValue;
 	}
 
 	/**
