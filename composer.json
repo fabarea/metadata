@@ -2,12 +2,11 @@
 	"name": "fab/metadata",
 	"type": "typo3-cms-extension",
 	"description": "PHP-based metadata extraction.",
-	"homepage": "https://forge.typo3.org/projects/extension-metadata",
+	"homepage": "https://github.com/fabarea/metadata",
 	"license": ["GPL-2.0+"],
 	"keywords": ["TYPO3 CMS", "metadata"],
 	"support": {
-		"issues": "https://forge.typo3.org/projects/extension-metadata/issues"
+		"issues": "https://github.com/fabarea/metadata/issues"
 	},
 	"version": "2.3.0-dev"
 }
-
