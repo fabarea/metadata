@@ -15,7 +15,6 @@ $tca = array(
 	'columns' => array(
 		'copyright_notice' => array(
 			'exclude' => 1,
-			'l10n_mode' => 'exclude',
 			'l10n_display' => 'defaultAsReadonly',
 			'label' => 'LLL:EXT:metadata/Resources/Private/Language/locallang.xlf:sys_file_metadata.copyright_notice',
 			'config' => array(
