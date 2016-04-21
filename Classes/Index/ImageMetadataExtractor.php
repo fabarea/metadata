@@ -112,7 +112,7 @@ class ImageMetadataExtractor extends AbstractExtractor {
 	 * @return array
 	 */
 	public function extractMetaData(File $file, array $previousExtractedData = array()) {
-		$filename = $file->getForLocalProcessing();
+		$filename = $file->getForLocalProcessing(false);
 		$metadata = array(
 			'unit' => 'px'
 		);
