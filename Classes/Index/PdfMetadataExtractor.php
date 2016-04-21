@@ -80,7 +80,7 @@ class PdfMetadataExtractor extends AbstractExtractor {
 	public function extractMetaData(File $file, array $previousExtractedData = array()) {
 		$metadata = array();
 
-		$this->extractPdfMetaData($metadata, $file->getForLocalProcessing());
+		$this->extractPdfMetaData($metadata, $file->getForLocalProcessing(FALSE));
 		return $metadata;
 	}
 
