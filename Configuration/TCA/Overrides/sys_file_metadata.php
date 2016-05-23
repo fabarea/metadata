@@ -207,6 +207,7 @@ if (version_compare(TYPO3_version, '7.1', '<')) {
 				--palette--;;30;;,
 				--palette--;LLL:EXT:filemetadata/Resources/Private/Language/locallang_tca.xlf:palette.metrics;50;;,
 				--palette--;;51;;,
+				--palette--;LLL:EXT:filemetadata/Resources/Private/Language/locallang_tca.xlf:palette.content_date;60,
 			--div--;LLL:EXT:lang/locallang_tca.xlf:sys_category.tabs.category,categories'
 		),
 	);
@@ -228,6 +229,7 @@ if (version_compare(TYPO3_version, '7.1', '<')) {
 				--palette--;;30;;,
 				--palette--;LLL:EXT:filemetadata/Resources/Private/Language/locallang_tca.xlf:palette.metrics;50;;,
 				--palette--;;51;;,
+				--palette--;LLL:EXT:filemetadata/Resources/Private/Language/locallang_tca.xlf:palette.content_date;60,
 			--div--;LLL:EXT:lang/locallang_tca.xlf:sys_category.tabs.category,categories'
 		),
 	);
