@@ -119,7 +119,10 @@ class ImageMetadataExtractor extends AbstractExtractor {
 		);
 
 		// Parse basic metadata from getimagesize, write additional metadata to $info
-		$imageSize = getimagesize($filename, $info);
+		$info = array();
+		if (@is_file($filename)) {
+			$imageSize = getimagesize($filename, $info);
+		}
 
 		if (isset($imageSize['channels'])) {
 			$metadata['color_space'] = $this->getColorSpace($imageSize['channels']);
@@ -150,7 +153,10 @@ class ImageMetadataExtractor extends AbstractExtractor {
 			return;
 		}
 
-		$data = @exif_read_data($filename, 0, TRUE);
+		$data = array();
+		if (@is_file($filename)) {
+			$data = @exif_read_data($filename, 0, TRUE);
+		}
 
 		if (is_array($data['EXIF'])) {
 			$exif = $data['EXIF'];
@@ -335,7 +341,11 @@ class ImageMetadataExtractor extends AbstractExtractor {
 	 * @return bool
 	 */
 	protected function isAllowedImageType($filename) {
-		$imageType = exif_imagetype($filename);
+		$imageType = null;
+
+		if (@is_file($filename)) {
+			$imageType = exif_imagetype($filename);
+		}
 
 		return in_array($imageType, $this->allowedImageTypes);
 	}
