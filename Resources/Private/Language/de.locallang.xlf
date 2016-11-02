@@ -6,6 +6,10 @@
 			<trans-unit id="palette.exif">
 				<source>EXIF / IPTC</source>
 			</trans-unit>
+			<trans-unit id="sys_file_metadata.credit">
+				<source>Credit</source>
+				<target>Anbieter</target>
+			</trans-unit>
 			<trans-unit id="sys_file_metadata.copyright_notice">
 				<source>Copyright notice</source>
 				<target>Urheberrechts-Hinweis</target>

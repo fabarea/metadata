@@ -2,6 +2,7 @@
 # Table structure for table 'sys_file_metadata'
 #
 CREATE TABLE sys_file_metadata (
+	credit varchar(32) DEFAULT '' NOT NULL,
 	copyright_notice varchar(255) DEFAULT '' NOT NULL,
 	aperture_value float unsigned DEFAULT '0' NOT NULL,
 	shutter_speed_value varchar(24) DEFAULT '' NOT NULL,
