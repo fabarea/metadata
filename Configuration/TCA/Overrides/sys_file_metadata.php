@@ -11,8 +11,20 @@ $tca = array(
 		),
 		'23' => array('showitem' => 'camera_model, flash, metering_mode', 'canNotCollapse' => '1'),
 		'51' => array('showitem' => 'horizontal_resolution, vertical_resolution', 'canNotCollapse' => '1'),
+		'61' => array('showitem' => 'credit', 'canNotCollapse' => '1'),
 	),
 	'columns' => array(
+		'credit' => array(
+			'exclude' => 1,
+			'l10n_display' => 'defaultAsReadonly',
+			'label' => 'LLL:EXT:metadata/Resources/Private/Language/locallang.xlf:sys_file_metadata.credit',
+			'config' => array(
+				'type' => 'input',
+				'size' => 40,
+				'max' => '255',
+				'eval' => 'trim'
+			),
+		),
 		'copyright_notice' => array(
 			'exclude' => 1,
 			'l10n_display' => 'defaultAsReadonly',
@@ -203,6 +215,7 @@ if (version_compare(TYPO3_version, '7.1', '<')) {
 				creator,
 				--palette--;;20;;,
 				--palette--;;21;;,
+				--palette--;;61;;,
 				--palette--;LLL:EXT:metadata/Resources/Private/Language/locallang.xlf:palette.exif;22;;,
 				--palette--;;23;;,
 				--palette--;LLL:EXT:filemetadata/Resources/Private/Language/locallang_tca.xlf:palette.geo_location;40;;,
@@ -225,6 +238,7 @@ if (version_compare(TYPO3_version, '7.1', '<')) {
 				creator,
 				--palette--;;20;;,
 				--palette--;;21;;,
+				--palette--;;61;;,
 				--palette--;LLL:EXT:metadata/Resources/Private/Language/locallang.xlf:palette.exif;22;;,
 				--palette--;;23;;,
 				--palette--;LLL:EXT:filemetadata/Resources/Private/Language/locallang_tca.xlf:palette.geo_location;40;;,
