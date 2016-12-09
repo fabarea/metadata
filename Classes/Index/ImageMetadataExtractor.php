@@ -131,7 +131,7 @@ class ImageMetadataExtractor extends AbstractExtractor {
 		$this->extractExifMetaData($metadata, $filename);
 		$this->extractIptcMetaData($metadata, $info);
 
-		return $this->getUnicodeUtility()->convertValues($metadata);
+		return $metadata;
 	}
 
 	/**
@@ -153,6 +153,11 @@ class ImageMetadataExtractor extends AbstractExtractor {
 			return;
 		}
 
+		$convertEncodingManually = false;
+		if (@ini_set('exif.encode_unicode', 'UTF-8') === false) {
+			$convertEncodingManually = true;
+		}
+
 		$data = array();
 		if (@is_file($filename)) {
 			$data = @exif_read_data($filename, 0, TRUE);
@@ -169,6 +174,10 @@ class ImageMetadataExtractor extends AbstractExtractor {
 			}
 
 			$this->processExifData($metadata, $exif);
+		}
+
+		if ($convertEncodingManually) {
+			$metadata = $this->getUnicodeUtility()->convertValues($metadata);
 		}
 	}
 
@@ -331,6 +340,11 @@ class ImageMetadataExtractor extends AbstractExtractor {
 							$metadata[$mediaField] = $iptc[$attribute][0];
 						}
 					}
+				}
+
+				// check if data is already encoded as UTF-8
+				if (empty($iptc['1#090'][0]) || $iptc['1#090'][0] != "\x1b\x25\x47") { // this is ESC%G
+					$metadata = $this->getUnicodeUtility()->convertValues($metadata);
 				}
 			}
 		}
