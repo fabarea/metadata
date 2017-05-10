@@ -100,6 +100,7 @@ $tca = array(
 			'label' => 'LLL:EXT:metadata/Resources/Private/Language/locallang.xlf:sys_file_metadata.flash',
 			'config' => array(
 				'type' => 'select',
+				'renderType' => 'selectSingle',
 				'default' => '-1',
 				'items' => array(
 					array('', '0'),
@@ -136,6 +137,7 @@ $tca = array(
 			'config' => array(
 				'type' => 'select',
 				'default' => '-1',
+				'renderType' => 'selectSingle',
 				'itemListStyle' => 'width:200px;',
 				'items' => array(
 					array('', '0'),
