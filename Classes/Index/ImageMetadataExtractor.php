@@ -415,7 +415,7 @@ class ImageMetadataExtractor extends AbstractExtractor {
 	 * @return string
 	 */
 	protected function formatShutterSpeedValue($shutterSpeedValue) {
-		if ((strpos($shutterSpeedValue, '1/') === FALSE)) {
+		if (preg_match('/^1\//', $shutterSpeedValue) !== 1) {
 			if (strpos($shutterSpeedValue, '/') !== FALSE) {
 				$parts = explode('/', $shutterSpeedValue);
 				if (intval($parts[1])) {
