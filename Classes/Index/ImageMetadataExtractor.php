@@ -14,6 +14,7 @@ namespace Fab\Metadata\Index;
  * The TYPO3 project - inspiring people to share!
  */
 
+use TYPO3\CMS\Core\Resource\AbstractFile;
 use TYPO3\CMS\Core\Resource\File;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
@@ -23,6 +24,13 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
 class ImageMetadataExtractor extends AbstractExtractor {
 
 	/**
+	 * Allowed file types
+	 *
+	 * @var array
+	 */
+	protected $allowedFileTypes = array(AbstractFile::FILETYPE_IMAGE);
+
+    /**
 	 * Allowed image types
 	 *
 	 * @var array
