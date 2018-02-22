@@ -436,8 +436,10 @@ class ImageMetadataExtractor extends AbstractExtractor {
 	protected function getColorSpace($value) {
 		if (array_key_exists($value, $this->colorSpaceToNameMapping)) {
 			$value = $this->colorSpaceToNameMapping[$value];
+		} else {
+			$value = ''
 		}
 
-		return (string)$value;
+		return $value;
 	}
 }
