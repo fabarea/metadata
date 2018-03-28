@@ -465,7 +465,7 @@ class ImageMetadataExtractor extends AbstractExtractor {
 		if (array_key_exists($value, $this->colorSpaceToNameMapping)) {
 			$value = $this->colorSpaceToNameMapping[$value];
 		} else {
-			$value = ''
+            $value = '';
 		}
 
 		return $value;
