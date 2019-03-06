@@ -11,11 +11,22 @@ $tca = array(
 		),
 		'23' => array('showitem' => 'camera_model, flash, metering_mode', 'canNotCollapse' => '1'),
 		'51' => array('showitem' => 'horizontal_resolution, vertical_resolution', 'canNotCollapse' => '1'),
+		'61' => array('showitem' => 'credit', 'canNotCollapse' => '1'),
 	),
 	'columns' => array(
+		'credit' => array(
+			'exclude' => 1,
+			'l10n_display' => 'defaultAsReadonly',
+			'label' => 'LLL:EXT:metadata/Resources/Private/Language/locallang.xlf:sys_file_metadata.credit',
+			'config' => array(
+				'type' => 'input',
+				'size' => 40,
+				'max' => '255',
+				'eval' => 'trim'
+			),
+		),
 		'copyright_notice' => array(
 			'exclude' => 1,
-			'l10n_mode' => 'exclude',
 			'l10n_display' => 'defaultAsReadonly',
 			'label' => 'LLL:EXT:metadata/Resources/Private/Language/locallang.xlf:sys_file_metadata.copyright_notice',
 			'config' => array(
@@ -101,6 +112,7 @@ $tca = array(
 			'label' => 'LLL:EXT:metadata/Resources/Private/Language/locallang.xlf:sys_file_metadata.flash',
 			'config' => array(
 				'type' => 'select',
+				'renderType' => 'selectSingle',
 				'default' => '-1',
 				'items' => array(
 					array('', '0'),
@@ -137,6 +149,7 @@ $tca = array(
 			'config' => array(
 				'type' => 'select',
 				'default' => '-1',
+				'renderType' => 'selectSingle',
 				'itemListStyle' => 'width:200px;',
 				'items' => array(
 					array('', '0'),
@@ -202,12 +215,14 @@ if (version_compare(TYPO3_version, '7.1', '<')) {
 				creator,
 				--palette--;;20;;,
 				--palette--;;21;;,
+				--palette--;;61;;,
 				--palette--;LLL:EXT:metadata/Resources/Private/Language/locallang.xlf:palette.exif;22;;,
 				--palette--;;23;;,
 				--palette--;LLL:EXT:filemetadata/Resources/Private/Language/locallang_tca.xlf:palette.geo_location;40;;,
 				--palette--;;30;;,
 				--palette--;LLL:EXT:filemetadata/Resources/Private/Language/locallang_tca.xlf:palette.metrics;50;;,
 				--palette--;;51;;,
+				--palette--;LLL:EXT:filemetadata/Resources/Private/Language/locallang_tca.xlf:palette.content_date;60,
 			--div--;LLL:EXT:lang/locallang_tca.xlf:sys_category.tabs.category,categories'
 		),
 	);
@@ -223,12 +238,14 @@ if (version_compare(TYPO3_version, '7.1', '<')) {
 				creator,
 				--palette--;;20;;,
 				--palette--;;21;;,
+				--palette--;;61;;,
 				--palette--;LLL:EXT:metadata/Resources/Private/Language/locallang.xlf:palette.exif;22;;,
 				--palette--;;23;;,
 				--palette--;LLL:EXT:filemetadata/Resources/Private/Language/locallang_tca.xlf:palette.geo_location;40;;,
 				--palette--;;30;;,
 				--palette--;LLL:EXT:filemetadata/Resources/Private/Language/locallang_tca.xlf:palette.metrics;50;;,
 				--palette--;;51;;,
+				--palette--;LLL:EXT:filemetadata/Resources/Private/Language/locallang_tca.xlf:palette.content_date;60,
 			--div--;LLL:EXT:lang/locallang_tca.xlf:sys_category.tabs.category,categories'
 		),
 	);

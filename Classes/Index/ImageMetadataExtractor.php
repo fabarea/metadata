@@ -14,6 +14,7 @@ namespace Fab\Metadata\Index;
  * The TYPO3 project - inspiring people to share!
  */
 
+use TYPO3\CMS\Core\Resource\AbstractFile;
 use TYPO3\CMS\Core\Resource\File;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
@@ -23,6 +24,13 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
 class ImageMetadataExtractor extends AbstractExtractor {
 
 	/**
+	 * Allowed file types
+	 *
+	 * @var array
+	 */
+	protected $allowedFileTypes = array(AbstractFile::FILETYPE_IMAGE);
+
+    /**
 	 * Allowed image types
 	 *
 	 * @var array
@@ -51,6 +59,7 @@ class ImageMetadataExtractor extends AbstractExtractor {
 		'2#025' => 'keywords',
 		'2#115' => 'publisher',
 		'2#080' => 'creator',
+		'2#110' => 'credit',
 		'2#116' => 'copyright_notice',
 		'2#100' => 'location_country',
 		'2#090' => 'location_city',
@@ -112,13 +121,16 @@ class ImageMetadataExtractor extends AbstractExtractor {
 	 * @return array
 	 */
 	public function extractMetaData(File $file, array $previousExtractedData = array()) {
-		$filename = $file->getForLocalProcessing();
+		$filename = $file->getForLocalProcessing(false);
 		$metadata = array(
 			'unit' => 'px'
 		);
 
 		// Parse basic metadata from getimagesize, write additional metadata to $info
-		$imageSize = getimagesize($filename, $info);
+		$info = array();
+		if (@is_file($filename)) {
+			$imageSize = getimagesize($filename, $info);
+		}
 
 		if (isset($imageSize['channels'])) {
 			$metadata['color_space'] = $this->getColorSpace($imageSize['channels']);
@@ -127,7 +139,7 @@ class ImageMetadataExtractor extends AbstractExtractor {
 		$this->extractExifMetaData($metadata, $filename);
 		$this->extractIptcMetaData($metadata, $info);
 
-		return $this->getUnicodeUtility()->convertValues($metadata);
+		return $metadata;
 	}
 
 	/**
@@ -149,7 +161,15 @@ class ImageMetadataExtractor extends AbstractExtractor {
 			return;
 		}
 
-		$data = @exif_read_data($filename, 0, TRUE);
+		$convertEncodingManually = false;
+		if (@ini_set('exif.encode_unicode', 'UTF-8') === false) {
+			$convertEncodingManually = true;
+		}
+
+		$data = array();
+		if (@is_file($filename)) {
+			$data = @exif_read_data($filename, 0, TRUE);
+		}
 
 		if (is_array($data['EXIF'])) {
 			$exif = $data['EXIF'];
@@ -162,6 +182,10 @@ class ImageMetadataExtractor extends AbstractExtractor {
 			}
 
 			$this->processExifData($metadata, $exif);
+		}
+
+		if ($convertEncodingManually) {
+			$metadata = $this->getUnicodeUtility()->convertValues($metadata);
 		}
 	}
 
@@ -212,9 +236,12 @@ class ImageMetadataExtractor extends AbstractExtractor {
 
 				case 'Copyright':
 				case 'CopyrightNotice':
-				case 'Credit':
 				case 'Rights':
 					$metadata['copyright_notice'] = $value;
+					break;
+
+				case 'Credit':
+					$metadata['credit'] = $value;
 					break;
 
 				case 'Artist':
@@ -322,6 +349,11 @@ class ImageMetadataExtractor extends AbstractExtractor {
 						}
 					}
 				}
+
+				// check if data is already encoded as UTF-8
+				if (empty($iptc['1#090'][0]) || $iptc['1#090'][0] != "\x1b\x25\x47") { // this is ESC%G
+					$metadata = $this->getUnicodeUtility()->convertValues($metadata);
+				}
 			}
 		}
 	}
@@ -331,7 +363,11 @@ class ImageMetadataExtractor extends AbstractExtractor {
 	 * @return bool
 	 */
 	protected function isAllowedImageType($filename) {
-		$imageType = exif_imagetype($filename);
+		$imageType = null;
+
+		if (@is_file($filename)) {
+			$imageType = exif_imagetype($filename);
+		}
 
 		return in_array($imageType, $this->allowedImageTypes);
 	}
@@ -360,7 +396,7 @@ class ImageMetadataExtractor extends AbstractExtractor {
 	 * @param array $value
 	 * @param string $ref
 	 *
-	 * @return string
+	 * @return string|null
 	 */
 	protected function parseGpsCoordinate($value, $ref) {
 		if (is_array($value)) {
@@ -379,7 +415,7 @@ class ImageMetadataExtractor extends AbstractExtractor {
 			$value = ($ref === 'N' || $ref === 'E') ? $neutralValue : '-' . $neutralValue;
 		}
 
-		return (string)$value;
+		return $value === null ? null : (string)$value;
 	}
 
 	/**
@@ -407,7 +443,7 @@ class ImageMetadataExtractor extends AbstractExtractor {
 	 * @return string
 	 */
 	protected function formatShutterSpeedValue($shutterSpeedValue) {
-		if ((strpos($shutterSpeedValue, '1/') === FALSE)) {
+		if (preg_match('/^1\//', $shutterSpeedValue) !== 1) {
 			if (strpos($shutterSpeedValue, '/') !== FALSE) {
 				$parts = explode('/', $shutterSpeedValue);
 				if (intval($parts[1])) {
@@ -428,8 +464,10 @@ class ImageMetadataExtractor extends AbstractExtractor {
 	protected function getColorSpace($value) {
 		if (array_key_exists($value, $this->colorSpaceToNameMapping)) {
 			$value = $this->colorSpaceToNameMapping[$value];
+		} else {
+            $value = '';
 		}
 
-		return (string)$value;
+		return $value;
 	}
 }

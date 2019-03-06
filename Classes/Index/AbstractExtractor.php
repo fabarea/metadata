@@ -24,13 +24,27 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
 abstract class AbstractExtractor implements ExtractorInterface {
 
 	/**
+	 * Allowed file types
+	 *
+	 * @var array
+	 */
+	protected $allowedFileTypes = array();
+
+	/**
+	 * Allowed file extensions
+	 *
+	 * @var array
+	 */
+	protected $allowedFileExtensions = array();
+
+	/**
 	 * Returns an array of supported file types;
 	 * An empty array indicates all filetypes
 	 *
 	 * @return array
 	 */
 	public function getFileTypeRestrictions() {
-		return array();
+		return $this->allowedFileTypes;
 	}
 
 	/**
