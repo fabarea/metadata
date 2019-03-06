@@ -31,7 +31,7 @@ class ExtensionManager {
 
 		$out .= '
 		<div style="">
-			<div class="typo3-message message-' . $this->getExifClassName() . '">
+			<div class="typo3-message message-' . $this->getExifClassName() . ' alert alert-' . $this->getExifClassName() . '">
 				<div class="message-header">
 					PHP EXIF extension
 				</div>
@@ -44,7 +44,7 @@ class ExtensionManager {
 
 		$out .= '
 		<div style="">
-			<div class="typo3-message message-' . $this->getIptcClassName() . '">
+			<div class="typo3-message message-' . $this->getIptcClassName() . ' alert alert-' . $this->getIptcClassName() . '">
 				<div class="message-header">
 					PHP IPTC extension
 				</div>
@@ -74,7 +74,11 @@ class ExtensionManager {
 	 * @return string
 	 */
 	protected function getExifClassName() {
-		return $this->isExifExtensionAvailable() ? 'ok' : 'warning';
+		if (\TYPO3\CMS\Core\Utility\VersionNumberUtility::convertVersionNumberToInteger(TYPO3_version) >= 7000000) {
+			return $this->isExifExtensionAvailable() ? 'success' : 'warning';
+		} else {
+			return $this->isExifExtensionAvailable() ? 'ok' : 'warning';
+		}
 	}
 
 	/**
@@ -105,7 +109,11 @@ class ExtensionManager {
 	 * @return string
 	 */
 	protected function getIptcClassName() {
-		return $this->isExifExtensionAvailable() ? 'ok' : 'warning';
+		if (\TYPO3\CMS\Core\Utility\VersionNumberUtility::convertVersionNumberToInteger(TYPO3_version) >= 7000000) {
+			return $this->isExifExtensionAvailable() ? 'success' : 'warning';
+		} else {
+			return $this->isExifExtensionAvailable() ? 'ok' : 'warning';
+		}
 	}
 
 	/**
