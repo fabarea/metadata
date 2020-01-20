@@ -20,8 +20,8 @@ $tca = array(
 			'label' => 'LLL:EXT:metadata/Resources/Private/Language/locallang.xlf:sys_file_metadata.credit',
 			'config' => array(
 				'type' => 'input',
-				'size' => 40,
-				'max' => '255',
+				'size' => 30,
+				'max' => '32',
 				'eval' => 'trim'
 			),
 		),
