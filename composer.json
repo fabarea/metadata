@@ -14,7 +14,6 @@
 		}
 	},
 	"replace": {
-		"metadata": "self.version",
 		"typo3-ter/metadata": "self.version"
 	}
 }
