@@ -415,7 +415,7 @@ class ImageMetadataExtractor extends AbstractExtractor {
 			$value = ($ref === 'N' || $ref === 'E') ? $neutralValue : '-' . $neutralValue;
 		}
 
-		return $value === null ? null : (string)$value;
+		return ($value === null || $value === '' || $value == 0) ? '0.00000000000000' : (string)$value;
 	}
 
 	/**
