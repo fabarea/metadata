@@ -344,6 +344,10 @@ class ImageMetadataExtractor extends AbstractExtractor {
 						// store categories as comma separated values in DB
 						if ($mediaField === 'keywords') {
 							$metadata[$mediaField] = implode(',', $iptc[$attribute]);
+						} elseif ($mediaField === 'content_creation_date') {
+							if (empty($metadata[$mediaField])) {
+								$metadata[$mediaField] = strtotime($iptc[$attribute][0]);
+							}
 						} else {
 							$metadata[$mediaField] = $iptc[$attribute][0];
 						}
