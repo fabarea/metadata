@@ -57,7 +57,7 @@ class ImageMetadataExtractor extends AbstractExtractor {
 		'2#005' => 'title',
 		'2#120' => 'caption',
 		'2#025' => 'keywords',
-		'2#115' => 'publisher',
+		'2#115' => 'source',
 		'2#080' => 'creator',
 		'2#110' => 'credit',
 		'2#116' => 'copyright_notice',
