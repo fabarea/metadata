@@ -396,7 +396,7 @@ class ImageMetadataExtractor extends AbstractExtractor {
 	 * @param array $value
 	 * @param string $ref
 	 *
-	 * @return string|null
+	 * @return string
 	 */
 	protected function parseGpsCoordinate($value, $ref) {
 		if (is_array($value)) {
@@ -415,7 +415,7 @@ class ImageMetadataExtractor extends AbstractExtractor {
 			$value = ($ref === 'N' || $ref === 'E') ? $neutralValue : '-' . $neutralValue;
 		}
 
-		return $value === null ? null : (string)$value;
+		return empty($value) ? '0.00000000000000' : (string)$value;
 	}
 
 	/**
