@@ -14,6 +14,7 @@ namespace Fab\Metadata\Utility;
  * The TYPO3 project - inspiring people to share!
  */
 
+use TYPO3\CMS\Core\Charset\CharsetConverter;
 use TYPO3\CMS\Core\SingletonInterface;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
@@ -31,7 +32,7 @@ class UnicodeUtility implements SingletonInterface {
 	 * @param array $metadata
 	 * @return array
 	 */
-	public function convertValues(array $metadata) {
+	public function convertValues(array $metadata): array {
 
 		foreach ($metadata as $key => $value) {
 			$metadata[$key] = $this->convert($value);
@@ -44,7 +45,7 @@ class UnicodeUtility implements SingletonInterface {
 	 * @param string $value
 	 * @return string
 	 */
-	public function convert($value) {
+	public function convert(string $value): string {
 
 		// iso-8859-15 is assumed to be the standard encoding for file metadata
 		$inputEncoding = 'iso-8859-15';
@@ -54,11 +55,11 @@ class UnicodeUtility implements SingletonInterface {
 	}
 
 	/**
-	 * @return \TYPO3\CMS\Core\Charset\CharsetConverter
+	 * @return CharsetConverter
 	 */
-	protected function getCharsetConverter() {
-		if (is_null($this->charsetConverter)) {
-			$this->charsetConverter = GeneralUtility::makeInstance('TYPO3\CMS\Core\Charset\CharsetConverter');
+	protected function getCharsetConverter(): CharsetConverter {
+		if (!$this->charsetConverter) {
+			$this->charsetConverter = GeneralUtility::makeInstance(CharsetConverter::class);
 		}
 		return $this->charsetConverter;
 	}

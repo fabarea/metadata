@@ -28,32 +28,32 @@ class ImageMetadataExtractor extends AbstractExtractor {
 	 *
 	 * @var array
 	 */
-	protected $allowedFileTypes = array(AbstractFile::FILETYPE_IMAGE);
+	protected $allowedFileTypes = [AbstractFile::FILETYPE_IMAGE];
 
-    /**
+	/**
 	 * Allowed image types
 	 *
 	 * @var array
 	 */
-	protected $allowedImageTypes = array(IMAGETYPE_JPEG, IMAGETYPE_TIFF_II, IMAGETYPE_TIFF_MM);
+	protected $allowedImageTypes = [IMAGETYPE_JPEG, IMAGETYPE_TIFF_II, IMAGETYPE_TIFF_MM];
 
 	/**
 	 * Allowed file extensions
 	 *
 	 * @var array
 	 */
-	protected $allowedFileExtensions = array(
+	protected $allowedFileExtensions = [
 		'jpeg',
 		'jpg',
 		'tiff',
 		'gif',
 		'png',
-	);
+	];
 
 	/**
 	 * @var array
 	 */
-	protected $iptcAttributesMapping = array(
+	protected $iptcAttributesMapping = [
 		'2#005' => 'title',
 		'2#120' => 'caption',
 		'2#025' => 'keywords',
@@ -64,19 +64,19 @@ class ImageMetadataExtractor extends AbstractExtractor {
 		'2#100' => 'location_country',
 		'2#090' => 'location_city',
 		'2#055' => 'content_creation_date',
-	);
+	];
 
 	/**
 	 * @var array
 	 */
-	protected $colorSpaceToNameMapping = array(
+	protected $colorSpaceToNameMapping = [
 		'0' => 'grey',
 		'1' => 'sRGB',
 		'2' => 'RGB',
 		'3' => 'RGB',
 		'4' => 'grey',
 		'6' => 'RGB',
-	);
+	];
 
 	/**
 	 * Returns the data priority of the extraction Service.
@@ -86,7 +86,7 @@ class ImageMetadataExtractor extends AbstractExtractor {
 	 *
 	 * @return integer
 	 */
-	public function getPriority() {
+	public function getPriority(): int {
 		return 17;
 	}
 
@@ -97,7 +97,7 @@ class ImageMetadataExtractor extends AbstractExtractor {
 	 *
 	 * @return integer
 	 */
-	public function getExecutionPriority() {
+	public function getExecutionPriority(): int {
 		return 17;
 	}
 
@@ -107,7 +107,7 @@ class ImageMetadataExtractor extends AbstractExtractor {
 	 * @param File $file
 	 * @return boolean
 	 */
-	public function canProcess(File $file) {
+	public function canProcess(File $file): bool {
 		return in_array($file->getExtension(), $this->allowedFileExtensions);
 	}
 
@@ -120,14 +120,14 @@ class ImageMetadataExtractor extends AbstractExtractor {
 	 *
 	 * @return array
 	 */
-	public function extractMetaData(File $file, array $previousExtractedData = array()) {
+	public function extractMetaData(File $file, array $previousExtractedData = []): array {
 		$filename = $file->getForLocalProcessing(false);
-		$metadata = array(
+		$metadata = [
 			'unit' => 'px'
-		);
+		];
 
 		// Parse basic metadata from getimagesize, write additional metadata to $info
-		$info = array();
+		$info = [];
 		if (@is_file($filename)) {
 			$imageSize = getimagesize($filename, $info);
 		}
@@ -150,9 +150,9 @@ class ImageMetadataExtractor extends AbstractExtractor {
 	 *
 	 * @return void
 	 */
-	protected function extractExifMetaData(&$metadata, $filename) {
+	protected function extractExifMetaData(array &$metadata, string $filename) {
 		if (!$this->isExifExtensionAvailable()) {
-			$this->getLogger()->warning('Function exif_imagetype() and exif_read_data() are not available.');
+			$this->getLogger()->warning('Function exif_imagetype() or exif_read_data() is not available.');
 			return;
 		}
 
@@ -166,9 +166,9 @@ class ImageMetadataExtractor extends AbstractExtractor {
 			$convertEncodingManually = true;
 		}
 
-		$data = array();
+		$data = [];
 		if (@is_file($filename)) {
-			$data = @exif_read_data($filename, 0, TRUE);
+			$data = @exif_read_data($filename, 0, true);
 		}
 
 		// merge IFD0 and EXIF to cover the case IFD0 exists but EXIF is empty
@@ -329,7 +329,7 @@ class ImageMetadataExtractor extends AbstractExtractor {
 	 *
 	 * @return void
 	 */
-	protected function extractIptcMetaData(&$metadata, $info) {
+	protected function extractIptcMetaData(array &$metadata, array $info) {
 		if (!$this->isIptcExtensionAvailable()) {
 			$this->getLogger()->warning('Function iptcparse() is not available.');
 			return;
@@ -368,7 +368,7 @@ class ImageMetadataExtractor extends AbstractExtractor {
 	 * @param $filename
 	 * @return bool
 	 */
-	protected function isAllowedImageType($filename) {
+	protected function isAllowedImageType($filename): bool {
 		$imageType = null;
 
 		if (@is_file($filename)) {
@@ -383,8 +383,8 @@ class ImageMetadataExtractor extends AbstractExtractor {
 	 *
 	 * @return bool
 	 */
-	protected function isExifExtensionAvailable() {
-		return (function_exists('exif_imagetype') && function_exists('exif_read_data'));
+	protected function isExifExtensionAvailable(): bool {
+		return function_exists('exif_imagetype') && function_exists('exif_read_data');
 	}
 
 	/**
@@ -392,23 +392,23 @@ class ImageMetadataExtractor extends AbstractExtractor {
 	 *
 	 * @return bool
 	 */
-	protected function isIptcExtensionAvailable() {
+	protected function isIptcExtensionAvailable(): bool {
 		return function_exists('iptcparse');
 	}
 
 	/**
 	 * Converting GPS
 	 *
-	 * @param array $value
-	 * @param string $ref
+	 * @param array|null $value
+	 * @param string|null $ref
 	 *
 	 * @return string
 	 */
 	protected function parseGpsCoordinate($value, $ref) {
 		if (is_array($value)) {
-			$processedValue = array();
+			$processedValue = [];
 			foreach ($value as $key => $item) {
-				if (strpos($item, '/') !== FALSE) {
+				if (strpos($item, '/') !== false) {
 					$parts = GeneralUtility::trimExplode('/', $item);
 					if (intval($parts[1])) {
 						$processedValue[$key] = (int)($parts[0] / $parts[1]);
@@ -430,13 +430,14 @@ class ImageMetadataExtractor extends AbstractExtractor {
 	 * @param string $fraction
 	 * @return int
 	 */
-	protected function fractionToInteger($fraction) {
-		if (strpos($fraction, '/') !== FALSE) {
+	protected function fractionToInteger(string $fraction): int {
+		if (strpos($fraction, '/') !== false) {
 			$fractionParts = explode('/', $fraction);
 			$integer = intval($fractionParts[0] / $fractionParts[1]);
 		} else {
 			$integer = intval($fraction);
 		}
+
 		return $integer;
 	}
 
@@ -448,15 +449,16 @@ class ImageMetadataExtractor extends AbstractExtractor {
 	 * @param string $shutterSpeedValue
 	 * @return string
 	 */
-	protected function formatShutterSpeedValue($shutterSpeedValue) {
+	protected function formatShutterSpeedValue(string $shutterSpeedValue): string {
 		if (preg_match('/^1\//', $shutterSpeedValue) !== 1) {
-			if (strpos($shutterSpeedValue, '/') !== FALSE) {
+			if (strpos($shutterSpeedValue, '/') !== false) {
 				$parts = explode('/', $shutterSpeedValue);
 				if (intval($parts[1])) {
 					$shutterSpeedValue = '1/' . (int)pow(2, $parts[0] / $parts[1]);
 				}
 			}
 		}
+
 		return $shutterSpeedValue;
 	}
 
@@ -467,11 +469,11 @@ class ImageMetadataExtractor extends AbstractExtractor {
 	 *
 	 * @return string
 	 */
-	protected function getColorSpace($value) {
+	protected function getColorSpace(int $value): string {
 		if (array_key_exists($value, $this->colorSpaceToNameMapping)) {
 			$value = $this->colorSpaceToNameMapping[$value];
 		} else {
-            $value = '';
+			$value = '';
 		}
 
 		return $value;
