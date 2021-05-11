@@ -171,11 +171,13 @@ class ImageMetadataExtractor extends AbstractExtractor {
 			$data = @exif_read_data($filename, 0, TRUE);
 		}
 
-		if (is_array($data['EXIF'])) {
+		// merge IFD0 and EXIF to cover the case IFD0 exists but EXIF is empty
+		if (is_array($data['IFD0']) && !empty($data['IFD0'])) {
+			$data['EXIF'] = array_merge($data['IFD0'], is_array($data['EXIF']) ? $data['EXIF'] : []);
+		}
+
+		if (is_array($data['EXIF']) && !empty($data['EXIF'])) {
 			$exif = $data['EXIF'];
-			if (is_array($data['IFD0'])) {
-				$exif = array_merge($data['IFD0'], $exif);
-			}
 			// adds GPS data from global exif data
 			if (is_array($data['GPS']) && !isset($exif['GPS'])) {
 				$exif['GPS'] = $data['GPS'];
