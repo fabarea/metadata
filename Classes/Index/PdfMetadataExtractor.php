@@ -15,7 +15,7 @@ namespace Fab\Metadata\Index;
  */
 
 use TYPO3\CMS\Core\Resource\File;
-use \TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
+use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
 use ZendPdf\PdfDocument;
 
 // Add auto-loader for Zend PDF library
@@ -32,9 +32,9 @@ class PdfMetadataExtractor extends AbstractExtractor {
 	 *
 	 * @var array
 	 */
-	protected $allowedFileExtensions = array(
+	protected $allowedFileExtensions = [
 		'pdf',
-	);
+	];
 
 	/**
 	 * Returns the data priority of the extraction Service.
@@ -44,7 +44,7 @@ class PdfMetadataExtractor extends AbstractExtractor {
 	 *
 	 * @return integer
 	 */
-	public function getPriority() {
+	public function getPriority(): int {
 		return 16;
 	}
 
@@ -54,7 +54,7 @@ class PdfMetadataExtractor extends AbstractExtractor {
 	 *
 	 * @return integer
 	 */
-	public function getExecutionPriority() {
+	public function getExecutionPriority(): int {
 		return 16;
 	}
 
@@ -64,7 +64,7 @@ class PdfMetadataExtractor extends AbstractExtractor {
 	 * @param File $file
 	 * @return boolean
 	 */
-	public function canProcess(File $file) {
+	public function canProcess(File $file): bool {
 		return in_array($file->getExtension(), $this->allowedFileExtensions);
 	}
 
@@ -77,10 +77,11 @@ class PdfMetadataExtractor extends AbstractExtractor {
 	 *
 	 * @return array
 	 */
-	public function extractMetaData(File $file, array $previousExtractedData = array()) {
-		$metadata = array();
+	public function extractMetaData(File $file, array $previousExtractedData = []): array {
+		$metadata = [];
 
 		$this->extractPdfMetaData($metadata, $file->getForLocalProcessing(false));
+
 		return $metadata;
 	}
 
@@ -92,9 +93,9 @@ class PdfMetadataExtractor extends AbstractExtractor {
 	 *
 	 * @return void
 	 */
-	public function extractPdfMetaData(&$metadata, $filename) {
+	public function extractPdfMetaData(array &$metadata, string $filename) {
 		try {
-			$pdf = new PdfDocument($filename, NULL, TRUE);
+			$pdf = new PdfDocument($filename, NULL, true);
 
 			$metadata['pages'] = count($pdf->pages);
 
@@ -154,9 +155,9 @@ class PdfMetadataExtractor extends AbstractExtractor {
 	 * PDF date: D:YYYYMMDDHHmmSSOHH'mm'
 	 *
 	 * @param string $pdfDate
-	 * @return int
+	 * @return int|null
 	 */
-	protected function parsePdfDate($pdfDate) {
+	protected function parsePdfDate(string $pdfDate) {
 
 		// Remove starting D: if
 		// TODO: what is this? A hack for windows?
@@ -193,7 +194,7 @@ class PdfMetadataExtractor extends AbstractExtractor {
 		$pdfDateTime = NULL;
 		if (is_object($pdfDateTimeFormat)) {
 			// Form it to a UNIX timestamp
-			$pdfDateTime = $pdfDateTimeFormat->format('U');
+			$pdfDateTime = (int)$pdfDateTimeFormat->format('U');
 		}
 
 		return $pdfDateTime;

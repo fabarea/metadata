@@ -15,48 +15,26 @@ namespace Fab\Metadata\Backend;
  */
 
 /**
- * Extension Manager integration
+ * Extension Configuration integration
  */
 class ExtensionManager {
 
 	/**
-	 * Display a message to the Extension Manager whether the configuration is OK or KO.
+	 * Display a message in the Extension Configuration whether the PHP extraction availability for IPTC/EXIF is OK or not.
 	 *
-	 * @param array $params
-	 * @param \TYPO3\CMS\Core\TypoScript\ConfigurationForm $tsObj
 	 * @return string the HTML message
 	 */
-	public function renderMessage(&$params, &$tsObj) {
-		$out = '';
-
-		$out .= '
-		<div style="">
-			<div class="typo3-message message-' . $this->getExifClassName() . ' alert alert-' . $this->getExifClassName() . '">
-				<div class="message-header">
-					PHP EXIF extension
-				</div>
-				<div class="message-body">
-					' . $this->getExifMessage() . '
-				</div>
+	public function renderMessage(): string {
+		return '
+		<div>
+			<div class="alert alert-' . $this->getExifClassName() . '">
+				' . $this->getExifMessage() . '
+			</div>
+			<div class="alert alert-' . $this->getIptcClassName() . '">
+				' . $this->getIptcMessage() . '
 			</div>
 		</div>
 		';
-
-		$out .= '
-		<div style="">
-			<div class="typo3-message message-' . $this->getIptcClassName() . ' alert alert-' . $this->getIptcClassName() . '">
-				<div class="message-header">
-					PHP IPTC extension
-				</div>
-				<div class="message-body">
-					' . $this->getIptcMessage() . '
-				</div>
-			</div>
-		</div>
-		';
-
-
-		return $out;
 	}
 
 	/**
@@ -64,8 +42,8 @@ class ExtensionManager {
 	 *
 	 * @return bool
 	 */
-	protected function isExifExtensionAvailable() {
-		return (function_exists('exif_imagetype') && function_exists('exif_read_data'));
+	protected function isExifExtensionAvailable(): bool {
+		return function_exists('exif_imagetype') && function_exists('exif_read_data');
 	}
 
 	/**
@@ -73,12 +51,8 @@ class ExtensionManager {
 	 *
 	 * @return string
 	 */
-	protected function getExifClassName() {
-		if (\TYPO3\CMS\Core\Utility\VersionNumberUtility::convertVersionNumberToInteger(TYPO3_version) >= 7000000) {
-			return $this->isExifExtensionAvailable() ? 'success' : 'warning';
-		} else {
-			return $this->isExifExtensionAvailable() ? 'ok' : 'warning';
-		}
+	protected function getExifClassName(): string {
+		return $this->isExifExtensionAvailable() ? 'success' : 'warning';
 	}
 
 	/**
@@ -86,12 +60,8 @@ class ExtensionManager {
 	 *
 	 * @return string
 	 */
-	protected function getExifMessage() {
-		$message = "EXIF extension is well installed.";
-		if (!$this->isExifExtensionAvailable()) {
-			$message = "EXIF extension is not installed.";
-		}
-		return $message;
+	protected function getExifMessage(): string {
+		return 'PHP EXIF extension is ' . ($this->isExifExtensionAvailable() ? 'well' : 'not') . ' installed.';
 	}
 
 	/**
@@ -99,7 +69,7 @@ class ExtensionManager {
 	 *
 	 * @return bool
 	 */
-	protected function isIptcExtensionAvailable() {
+	protected function isIptcExtensionAvailable(): bool {
 		return function_exists('iptcparse');
 	}
 
@@ -108,12 +78,8 @@ class ExtensionManager {
 	 *
 	 * @return string
 	 */
-	protected function getIptcClassName() {
-		if (\TYPO3\CMS\Core\Utility\VersionNumberUtility::convertVersionNumberToInteger(TYPO3_version) >= 7000000) {
-			return $this->isExifExtensionAvailable() ? 'success' : 'warning';
-		} else {
-			return $this->isExifExtensionAvailable() ? 'ok' : 'warning';
-		}
+	protected function getIptcClassName(): string {
+		return $this->isIptcExtensionAvailable() ? 'success' : 'warning';
 	}
 
 	/**
@@ -121,12 +87,8 @@ class ExtensionManager {
 	 *
 	 * @return string
 	 */
-	protected function getIptcMessage() {
-		$message = "IPTC extension is well installed.";
-		if (!$this->isExifExtensionAvailable()) {
-			$message = "IPTC extension is not installed.";
-		}
-		return $message;
+	protected function getIptcMessage(): string {
+		return 'PHP IPTC extension is ' . ($this->isIptcExtensionAvailable() ? 'well' : 'not') . ' installed.';
 	}
 
 }

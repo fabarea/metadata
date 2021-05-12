@@ -14,6 +14,9 @@ namespace Fab\Metadata\Index;
  * The TYPO3 project - inspiring people to share!
  */
 
+use Fab\Metadata\Utility\UnicodeUtility;
+use TYPO3\CMS\Core\Log\Logger;
+use TYPO3\CMS\Core\Log\LogManager;
 use TYPO3\CMS\Core\Resource\File;
 use TYPO3\CMS\Core\Resource\Index\ExtractorInterface;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
@@ -28,14 +31,14 @@ abstract class AbstractExtractor implements ExtractorInterface {
 	 *
 	 * @var array
 	 */
-	protected $allowedFileTypes = array();
+	protected $allowedFileTypes = [];
 
 	/**
 	 * Allowed file extensions
 	 *
 	 * @var array
 	 */
-	protected $allowedFileExtensions = array();
+	protected $allowedFileExtensions = [];
 
 	/**
 	 * Returns an array of supported file types;
@@ -43,7 +46,7 @@ abstract class AbstractExtractor implements ExtractorInterface {
 	 *
 	 * @return array
 	 */
-	public function getFileTypeRestrictions() {
+	public function getFileTypeRestrictions(): array {
 		return $this->allowedFileTypes;
 	}
 
@@ -57,8 +60,8 @@ abstract class AbstractExtractor implements ExtractorInterface {
 	 *
 	 * @return array
 	 */
-	public function getDriverRestrictions() {
-		return array();
+	public function getDriverRestrictions(): array {
+		return [];
 	}
 
 	/**
@@ -67,18 +70,17 @@ abstract class AbstractExtractor implements ExtractorInterface {
 	 * @param File $file
 	 * @return boolean
 	 */
-	public function canProcess(File $file) {
+	public function canProcess(File $file): bool {
 		return TRUE;
 	}
 
 	/**
 	 * Returns a logger instance
 	 *
-	 * @return \TYPO3\CMS\Core\Log\Logger
+	 * @return Logger
 	 */
-	protected function getLogger() {
-		/** @var $loggerManager \TYPO3\CMS\Core\Log\LogManager */
-		$loggerManager = GeneralUtility::makeInstance('TYPO3\CMS\Core\Log\LogManager');
+	protected function getLogger(): Logger {
+		$loggerManager = GeneralUtility::makeInstance(LogManager::class);
 
 		return $loggerManager->getLogger(__CLASS__);
 	}
@@ -86,7 +88,7 @@ abstract class AbstractExtractor implements ExtractorInterface {
 	/**
 	 * @return \Fab\Metadata\Utility\UnicodeUtility
 	 */
-	protected function getUnicodeUtility() {
-		return GeneralUtility::makeInstance('Fab\Metadata\Utility\UnicodeUtility');
+	protected function getUnicodeUtility(): UnicodeUtility {
+		return GeneralUtility::makeInstance(UnicodeUtility::class);
 	}
 }
