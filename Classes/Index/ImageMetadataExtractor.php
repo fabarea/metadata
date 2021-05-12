@@ -228,12 +228,16 @@ class ImageMetadataExtractor extends AbstractExtractor {
 				case 'CreateDate':
 				case 'DateTimeOriginal':
 				case 'DateTimeDigitized':
-					$metadata['content_creation_date'] = strtotime($value);
+					if (strtotime($value) > -2147483648) {
+						$metadata['content_creation_date'] = strtotime($value);
+					}
 					break;
 
 				case 'ModifyDate':
 				case 'DateTime':
-					$metadata['content_modification_date'] = strtotime($value);
+					if (strtotime($value) > -2147483648) {
+						$metadata['content_modification_date'] = strtotime($value);
+					}
 					break;
 
 				case 'Copyright':
@@ -347,7 +351,7 @@ class ImageMetadataExtractor extends AbstractExtractor {
 						if ($mediaField === 'keywords') {
 							$metadata[$mediaField] = implode(',', $iptc[$attribute]);
 						} elseif ($mediaField === 'content_creation_date') {
-							if (empty($metadata[$mediaField])) {
+							if (empty($metadata[$mediaField]) && strtotime($iptc[$attribute][0]) > -2147483648) {
 								$metadata[$mediaField] = strtotime($iptc[$attribute][0]);
 							}
 						} else {
