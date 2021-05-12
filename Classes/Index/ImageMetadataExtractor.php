@@ -206,13 +206,17 @@ class ImageMetadataExtractor extends AbstractExtractor {
 				case 'Headline':
 				case 'Title':
 				case 'XPTitle':
-					$metadata['title'] = $value;
+					if (!empty($value) && empty($metadata['title'])) {
+						$metadata['title'] = $value;
+					}
 					break;
 
 				case 'Subject':
 				case 'ImageDescription':
 				case 'Description':
-					$metadata['description'] = $value;
+					if (!empty($value) && empty($metadata['description'])) {
+						$metadata['description'] = $value;
+					}
 					break;
 
 				case 'CaptionAbstract':
@@ -221,21 +225,23 @@ class ImageMetadataExtractor extends AbstractExtractor {
 
 				case 'Keywords':
 				case 'XPKeywords':
-					$metadata['keywords'] = $value;
+					if (!empty($value) && empty($metadata['keywords'])) {
+						$metadata['keywords'] = $value;
+					}
 					break;
 
 				case 'ImageCreated':
 				case 'CreateDate':
 				case 'DateTimeOriginal':
 				case 'DateTimeDigitized':
-					if (strtotime($value) > -2147483648) {
+					if (!empty($value) && empty($metadata['content_creation_date']) && strtotime($value) > -2147483648) {
 						$metadata['content_creation_date'] = strtotime($value);
 					}
 					break;
 
 				case 'ModifyDate':
 				case 'DateTime':
-					if (strtotime($value) > -2147483648) {
+					if (!empty($value) && empty($metadata['content_modification_date']) && strtotime($value) > -2147483648) {
 						$metadata['content_modification_date'] = strtotime($value);
 					}
 					break;
@@ -243,7 +249,9 @@ class ImageMetadataExtractor extends AbstractExtractor {
 				case 'Copyright':
 				case 'CopyrightNotice':
 				case 'Rights':
-					$metadata['copyright'] = $value;
+					if (!empty($value) && empty($metadata['copyright'])) {
+						$metadata['copyright'] = $value;
+					}
 					break;
 
 				case 'Credit':
@@ -252,7 +260,9 @@ class ImageMetadataExtractor extends AbstractExtractor {
 
 				case 'Artist':
 				case 'Creator':
-					$metadata['creator'] = $value;
+					if (!empty($value) && empty($metadata['creator'])) {
+						$metadata['creator'] = $value;
+					}
 					break;
 
 				case 'ApertureValue':
@@ -276,7 +286,9 @@ class ImageMetadataExtractor extends AbstractExtractor {
 
 				case 'CameraModel':
 				case 'Model':
-					$metadata['camera_model'] = $value;
+					if (!empty($value) && empty($metadata['camera_model'])) {
+						$metadata['camera_model'] = $value;
+					}
 					break;
 
 				case 'Flash':
@@ -288,20 +300,28 @@ class ImageMetadataExtractor extends AbstractExtractor {
 					break;
 
 				case 'ColorSpace':
-					$metadata['color_space'] = $this->getColorSpace($value);
+					// EXIF attribute is more accurate, if set use this instead of return value from getimagesize()
+					if (!empty($value)) {
+						$metadata['color_space'] = $this->getColorSpace($value);
+					}
 					break;
 
 				case 'HorizontalResolution':
 				case 'XResolution':
-					$metadata['horizontal_resolution'] = $this->fractionToInteger($value);
+					if (!empty($value) && empty($metadata['horizontal_resolution'])) {
+						$metadata['horizontal_resolution'] = $this->fractionToInteger($value);
+					}
 					break;
+
 				case 'VerticalResolution':
 				case 'YResolution':
-					$metadata['vertical_resolution'] = $this->fractionToInteger($value);
+					if (!empty($value) && empty($metadata['vertical_resolution'])) {
+						$metadata['vertical_resolution'] = $this->fractionToInteger($value);
+					}
 					break;
 
 				case 'GPS':
-					if (is_array($value)) {
+					if (is_array($value) && !empty($value)) {
 						$metadata['latitude'] = $this->parseGpsCoordinate($value['GPSLatitude'], $value['GPSLatitudeRef']);
 						$metadata['longitude'] = $this->parseGpsCoordinate($value['GPSLongitude'], $value['GPSLongitudeRef']);
 					}
@@ -317,7 +337,9 @@ class ImageMetadataExtractor extends AbstractExtractor {
 
 				case 'CreatorTool':
 				case 'Software':
-					$metadata['creator_tool'] = $value;
+					if (!empty($value) && empty($metadata['creator_tool'])) {
+						$metadata['creator_tool'] = $value;
+					}
 					break;
 
 				default:
@@ -349,12 +371,14 @@ class ImageMetadataExtractor extends AbstractExtractor {
 					if (isset($iptc[$attribute])) {
 						// store categories as comma separated values in DB
 						if ($mediaField === 'keywords') {
-							$metadata[$mediaField] = implode(',', $iptc[$attribute]);
-						} elseif ($mediaField === 'content_creation_date') {
-							if (empty($metadata[$mediaField]) && strtotime($iptc[$attribute][0]) > -2147483648) {
-								$metadata[$mediaField] = strtotime($iptc[$attribute][0]);
+							if (empty($metadata['keywords']) && !empty($iptc[$attribute])) {
+								$metadata['keywords'] = implode(',', $iptc[$attribute]);
 							}
-						} else {
+						} elseif ($mediaField === 'content_creation_date') {
+							if (empty($metadata['content_creation_date']) && strtotime($iptc[$attribute][0]) > -2147483648) {
+								$metadata['content_creation_date'] = strtotime($iptc[$attribute][0]);
+							}
+						} elseif (!empty($iptc[$attribute][0]) && empty($metadata[$mediaField])) {
 							$metadata[$mediaField] = $iptc[$attribute][0];
 						}
 					}
@@ -373,7 +397,7 @@ class ImageMetadataExtractor extends AbstractExtractor {
 	 * @return bool
 	 */
 	protected function isAllowedImageType($filename): bool {
-		$imageType = null;
+		$imageType = NULL;
 
 		if (@is_file($filename)) {
 			$imageType = exif_imagetype($filename);
