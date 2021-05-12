@@ -3,15 +3,11 @@ defined('TYPO3_MODE') || die('Access denied.');
 
 $tca = [
 	'palettes' => [
-		'20' => ['showitem' => 'publisher, source', 'canNotCollapse' => '1'],
-		'21' => ['showitem' => 'creator_tool, copyright_notice', 'canNotCollapse' => '1'],
 		'22' => [
-			'showitem' => 'iso_speed_ratings, aperture_value, shutter_speed_value, focal_length',
+			'showitem' => 'iso_speed_ratings, aperture_value, shutter_speed_value, focal_length, --linebreak--, camera_model, flash, metering_mode',
 			'canNotCollapse' => '1'
 		],
-		'23' => ['showitem' => 'camera_model, flash, metering_mode', 'canNotCollapse' => '1'],
 		'51' => ['showitem' => 'horizontal_resolution, vertical_resolution', 'canNotCollapse' => '1'],
-		'61' => ['showitem' => 'credit', 'canNotCollapse' => '1'],
 	],
 	'columns' => [
 		'credit' => [
@@ -22,17 +18,6 @@ $tca = [
 				'type' => 'input',
 				'size' => 30,
 				'max' => '32',
-				'eval' => 'trim'
-			],
-		],
-		'copyright_notice' => [
-			'exclude' => 1,
-			'l10n_display' => 'defaultAsReadonly',
-			'label' => 'LLL:EXT:metadata/Resources/Private/Language/locallang.xlf:sys_file_metadata.copyright_notice',
-			'config' => [
-				'type' => 'input',
-				'size' => 40,
-				'max' => '255',
 				'eval' => 'trim'
 			],
 		],
@@ -200,28 +185,26 @@ $tca = [
 				],
 			]
 		],
-	],
-	'types' => [
-		TYPO3\CMS\Core\Resource\File::FILETYPE_IMAGE => ['showitem' => '
-			fileinfo, title, description, alternative, keywords, caption, download_name,
-			--div--;LLL:EXT:frontend/Resources/Private/Language/locallang_ttc.xlf:tabs.access,
-				--palette--;LLL:EXT:filemetadata/Resources/Private/Language/locallang_tca.xlf:palette.visibility;10;;,
-				fe_groups,
-			--div--;LLL:EXT:filemetadata/Resources/Private/Language/locallang_tca.xlf:tabs.metadata,
-				creator,
-				--palette--;;20;;,
-				--palette--;;21;;,
-				--palette--;;61;;,
-				--palette--;LLL:EXT:metadata/Resources/Private/Language/locallang.xlf:palette.exif;22;;,
-				--palette--;;23;;,
-				--palette--;LLL:EXT:filemetadata/Resources/Private/Language/locallang_tca.xlf:palette.geo_location;40;;,
-				--palette--;;30;;,
-				--palette--;LLL:EXT:filemetadata/Resources/Private/Language/locallang_tca.xlf:palette.metrics;50;;,
-				--palette--;;51;;,
-				--palette--;LLL:EXT:filemetadata/Resources/Private/Language/locallang_tca.xlf:palette.content_date;60,
-			--div--;LLL:EXT:lang/locallang_tca.xlf:sys_category.tabs.category,categories'
-		],
 	]
 ];
+
+\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::addToAllTCAtypes(
+	'sys_file_metadata',
+	'credit',
+	TYPO3\CMS\Core\Resource\File::FILETYPE_IMAGE,
+	'after:copyright'
+);
+\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::addToAllTCAtypes(
+	'sys_file_metadata',
+	'--palette--;LLL:EXT:metadata/Resources/Private/Language/locallang.xlf:palette.exif;22;;',
+	TYPO3\CMS\Core\Resource\File::FILETYPE_IMAGE,
+	'after:color_space'
+);
+\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::addToAllTCAtypes(
+	'sys_file_metadata',
+	'--palette--;;51',
+	TYPO3\CMS\Core\Resource\File::FILETYPE_IMAGE,
+	'after:unit'
+);
 
 \TYPO3\CMS\Core\Utility\ArrayUtility::mergeRecursiveWithOverrule($GLOBALS['TCA']['sys_file_metadata'], $tca);
