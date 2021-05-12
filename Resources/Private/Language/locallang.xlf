@@ -9,9 +9,6 @@
 			<trans-unit id="sys_file_metadata.credit">
 				<source>Credit</source>
 			</trans-unit>
-			<trans-unit id="sys_file_metadata.copyright_notice">
-				<source>Copyright notice</source>
-			</trans-unit>
 			<trans-unit id="sys_file_metadata.aperture_value">
 				<source>Aperture Value (F)</source>
 			</trans-unit>

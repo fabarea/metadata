@@ -60,7 +60,7 @@ class ImageMetadataExtractor extends AbstractExtractor {
 		'2#115' => 'source',
 		'2#080' => 'creator',
 		'2#110' => 'credit',
-		'2#116' => 'copyright_notice',
+		'2#116' => 'copyright',
 		'2#100' => 'location_country',
 		'2#090' => 'location_city',
 		'2#055' => 'content_creation_date',
@@ -243,7 +243,7 @@ class ImageMetadataExtractor extends AbstractExtractor {
 				case 'Copyright':
 				case 'CopyrightNotice':
 				case 'Rights':
-					$metadata['copyright_notice'] = $value;
+					$metadata['copyright'] = $value;
 					break;
 
 				case 'Credit':

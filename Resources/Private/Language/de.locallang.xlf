@@ -10,10 +10,6 @@
 				<source>Credit</source>
 				<target>Anbieter</target>
 			</trans-unit>
-			<trans-unit id="sys_file_metadata.copyright_notice">
-				<source>Copyright notice</source>
-				<target>Urheberrechts-Hinweis</target>
-			</trans-unit>
 			<trans-unit id="sys_file_metadata.aperture_value">
 				<source>Aperture Value (F)</source>
 				<target>Blendenzahl (F)</target>
