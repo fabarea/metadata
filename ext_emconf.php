@@ -14,8 +14,8 @@ $EM_CONF[$_EXTKEY] = [
             'depends' =>
                 [
                     'php' => '7.0.0-',
-                    'typo3' => '8.7.0-10.4.99',
-                    'filemetadata' => '8.7.0-10.4.99',
+                    'typo3' => '8.7.0-11.5.99',
+                    'filemetadata' => '8.7.0-11.5.99',
                 ],
             'conflicts' =>
                 [
