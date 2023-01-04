@@ -16,4 +16,9 @@
 	"replace": {
 		"typo3-ter/metadata": "self.version"
 	}
+	"extra": {
+		"typo3/cms": {
+			"extension-key": "metadata"
+		}
+	}
 }
